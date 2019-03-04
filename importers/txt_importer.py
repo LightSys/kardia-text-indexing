@@ -5,6 +5,5 @@ def importer(filename):
     return contents;
 
 # test run:
-#
-# test = importer("test_file.txt")
+# test = importer("test_text_importer.txt")
 # print(test)
