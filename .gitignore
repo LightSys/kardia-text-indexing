@@ -4,3 +4,6 @@ lib/
 share/
 lib64
 pip-selfcheck.json
+.env
+*.pyc
+*.swp
