@@ -154,3 +154,16 @@ def get_documents():
     else:
         print('Request for documents yielded bad response', response)
         print(response.content)
+
+def get_document(document_id):
+    response = requests.get(
+        BASE_REQUEST + '/e_document/rows/' + str(document_id),
+        params={'cx__mode': 'rest', 
+                'cx__res_format': 'attrs', 
+                'cx__res_attrs': 'basic'},
+        auth=get_auth())
+    if response.ok:
+        return Document(json_from_response(response))
+    else:
+        print('Request for document yielded bad response', response)
+        print(response.content)
