@@ -6,11 +6,11 @@ import datetime
 import os
 from dotenv import load_dotenv
 load_dotenv()
-logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
-requests_log = logging.getLogger('requests.packages.urllib3')
-requests_log.setLevel(logging.DEBUG)
-requests_log.propagate = True
+#logging.basicConfig()
+#logging.getLogger().setLevel(logging.DEBUG)
+#requests_log = logging.getLogger('requests.packages.urllib3')
+#requests_log.setLevel(logging.DEBUG)
+#requests_log.propagate = True
 
 BASE_PATH = '/usr/local/src/cx-git/centrallix-os'
 SERVER_PREFIX = 'http://10.5.11.230:800'
@@ -121,6 +121,7 @@ def get_access_token(session):
 
 
 def get_words():
+    result = {}
     response = requests.get(
         BASE_REQUEST + '/e_text_search_word/rows',
         params={'cx__mode': 'rest', 
@@ -133,11 +134,14 @@ def get_words():
         for word_id in content:
             print(word_id)
             if word_id != '@id':
-                yield Word(content[word_id])
+                word = Word(content[word_id])
+                result[word.text] = word
+        return result
     else:
         print('failed to get word', response)
 
 def get_documents():
+    result = []
     response = requests.get(
         BASE_REQUEST + '/e_document/rows',
         params={'cx__mode': 'rest', 
@@ -150,10 +154,11 @@ def get_documents():
         for doc_id in document_objects:
             print(doc_id)
             if doc_id != '@id':
-                yield Document(document_objects[doc_id])
+                result.append(Document(document_objects[doc_id]))
     else:
         print('Request for documents yielded bad response', response)
         print(response.content)
+    return result
 
 def get_document(document_id):
     response = requests.get(

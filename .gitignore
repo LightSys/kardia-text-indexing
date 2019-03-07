@@ -7,3 +7,4 @@ pip-selfcheck.json
 .env
 *.pyc
 *.swp
+index_events
