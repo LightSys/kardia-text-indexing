@@ -4,6 +4,7 @@ import http.client as http_client
 import json
 import datetime
 import os
+import MySQLdb
 from dotenv import load_dotenv
 load_dotenv()
 #logging.basicConfig()
@@ -87,10 +88,10 @@ def get_all_resource(resource_name, resource_maker):
                 'cx__res_attrs': 'basic'},
         auth=get_auth())
     if response.ok:
-        objs = json.loads(response.content.decode('utf8'))
+        objs = json_from_response(response)
         for o_id in objs:
-            print(o)
             if o_id != '@id':
+                print('got', resource_name, o_id)
                 yield resource_maker(objs[o_id])
     else:
         print('Request for all ' + resource_name + ' yielded bad response:', response)
@@ -106,33 +107,82 @@ def get_all_occurrences():
 
 class MySQLDataAccessor:
     def __init__(self):
-        self.database = mysql.connect('connection string')
+        (username, password) = get_auth()
+        self.username = username
+        self.database = MySQLdb.connect(user=username, passwd=password, db='Kardia_DB')
         self.pending_words = []
         self.pending_occurrences = []
         self.pending_relationships = []
+        self.cursor = self.database.cursor()
 
     def get_all_documents(self):
+        self.cursor.execute('select e_document_id, e_current_folder, e_current_filename from e_document')
         result = []
-        for (doc_id, filename) in self.database.get_rows():
+        for (doc_id, curr_folder, curr_filename) in self.cursor.fetchall():
+            filename = BASE_PATH + curr_folder + '/' + curr_filename
             result.append(Document(doc_id, filename))
         return result
 
     def put_word(self, word, relevance):
-        'insert into e_text_search_word (e_word, e_relevance) select %word, %relevance
-         where not exists (select 1 from e_text_search_word where e_word = %word'
+        self.pending_words.append((word, relevance))
         pass
 
     def add_occurrence(self, word_text, document, sequence, is_eol):
+        self.pending_occurrences.append((word_text, document.id, sequence, is_eol))
         pass
 
     def add_relationship(self, word, target_word, relevance):
-        pass
+        self.pending_relationships.append((word, target_word, relevance))
 
-    def delete_document_occurrences(self, document):
-        pass
+    # Use document_id because we may not have the document
+    def delete_document_occurrences(self, document_id):
+        self.database.cursor().execute('delete from e_text_search_occur where e_document_id = %s', (document_id,))
+
+    def delete_all_index_data(self):
+        self.database.cursor().execute('delete from e_text_search_occur')
+        self.database.cursor().execute('delete from e_text_search_rel')
+        self.database.cursor().execute('delete from e_text_search_word')
+        self.database.commit()
 
     def flush(self):
-        pass
+        (username, _) = get_auth()
+        cursor = self.database.cursor()
+        cursor.execute('select max(e_word_id) from e_text_search_word')
+        (max_word_id,) = cursor.fetchone()
+        if not max_word_id: max_word_id = 0
+        print('max_id is', max_word_id)
+        self.database.cursor().executemany(
+            '''insert into e_text_search_word
+                 (e_word_id, e_word, e_word_relevance, s_date_created, s_created_by, s_date_modified, s_modified_by) 
+               select %s, %s, %s, now(), %s, now(), %s
+               from e_document
+               where not exists (select * from e_text_search_word where e_word = %s)
+               limit 1''',
+            [(max_word_id + 1 + i, word_text, relevance, username, username, word_text) for (i, (word_text, relevance)) in  enumerate(self.pending_words)])
+        self.database.commit()
+        self.pending_words = []
+
+        self.database.cursor().executemany(
+            '''insert into e_text_search_occur (e_word_id, e_document_id, e_sequence, e_eol)
+               select e_word_id, %s, %s, %s
+               from e_text_search_word
+               where e_word = %s''',
+            [(doc_id, sequence, eol, word_text) for (word_text, doc_id, sequence, eol) in self.pending_occurrences])
+        self.database.commit()
+        self.pending_occurrences = []
+
+        self.database.cursor().executemany(
+            '''with w as (select e_word_id from e_text_search_word where e_word = %s),
+                    tw as (select e_word_id from e_text_search_word where e_word = %s)
+               insert into e_text_search_rel
+                   (e_word_id, e_target_word_id, e_rel_relevance, 
+                    s_date_created, s_created_by, s_date_modified, s_modified_by)
+               select w.e_word_id, tw.e_word_id, %s, now(), %s, now(), %s
+               from w, tw''',
+            map(lambda t: (t[0], t[1], t[2], username, username), self.pending_relationships))
+        self.database.commit()
+        self.pending_relationships = []
+            
 
 class RestApiDataAccessor:
     def __init__(self):
@@ -143,7 +193,7 @@ class RestApiDataAccessor:
             auth=get_auth())
         if response.ok:
             content = json.loads(response.content.decode('utf8'))
-            self.akey = content['akey']
+            self.token = content['akey']
         else:
             print('Getting the access token failed')
         self.all_words = {word.text: word for word in get_all_words()}
@@ -180,6 +230,7 @@ class RestApiDataAccessor:
             if response.ok:
                 word = word_from_json(json_from_response(response))
                 self.all_words[word.text] = word
+                print('Put word', word.text)
             else:
                 print('Failed to create new word')
 
@@ -193,6 +244,7 @@ class RestApiDataAccessor:
         if response.ok:
             occurrence = occurrence_from_json(json_from_response(response))
             self.all_occurrences[occurrence.document_id].append(occurrence)
+            print('Added_occurence', word_text)
             return occurrence
         else:
             print('Failed to create new occurrence')
@@ -205,10 +257,10 @@ class RestApiDataAccessor:
         else:
             print('Failed to create new occurrence')
 
-    def delete_document_occurrences(self, document):
-        for res_id in self.all_occurrences[document.id]:
+    def delete_document_occurrences(self, document_id):
+        for res_id in self.all_occurrences[document_id]:
             self.session.delete(SERVER_PREFIX + res_id)
-        del self.all_occurrences[document.id]
+        del self.all_occurrences[document_id]
 
     def flush(self):
         pass

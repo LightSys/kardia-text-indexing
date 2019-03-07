@@ -1,5 +1,4 @@
 import tokenizer
-import data_access
 import requests
 import importers.txt_importer as i
 import fnmatch
@@ -25,14 +24,14 @@ def index(document, importer, data_accessor):
             if index == last_line_index:
                 is_eol = True
             data_accessor.put_word(word, 1.0)
-            data_accessor.add_occurrence(word, document.id, total_index, is_eol)
-        total_index += 1
+            data_accessor.add_occurrence(word, document, total_index, is_eol)
+            total_index += 1
+    data_accessor.flush()
 
-def remove_from_index(document, data_accessor):
-    data_accessor.delete_document_occurrences(document)
+def remove_document(document_id, data_accessor):
+    data_accessor.delete_document_occurrences(document_id)
 
-def smart_index(document_id, importer_associations, all_words, token, session):
-    document = data_access.get_document(document_id)
+def smart_index(document, importer_associations, data_accessor):
     for (pattern, importer) in importer_associations:
         if fnmatch.fnmatch(document.filename, pattern):
-            index(document.id, all_words, importer, token, session)
+            index(document, importer, data_accessor)
