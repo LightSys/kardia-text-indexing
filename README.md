@@ -154,3 +154,39 @@ We did not put much effort into the following intended features of this tool.
 5. *Relationships between words*. We have not yet inserted any relationships
    between words, nor have we considered how to determine the relevance of a
    relationship.
+6. *Thorough unit testing*. Sorry guys, you get to have fun with this. We did
+   do a tiny bit, but a lot of the parts of this system are difficult to write
+   unit tests for (although it still would be good to have them).
+
+## Project infrastructure
+
+Of course, the project is written in python. We used python 3, with virtualenv
+and pip to manage dependencies. To get the project setup, make sure python 3 is
+installed, along with pip3 and virtualenv for python 3. Navigate to the project
+directory, and execute the following command:
+
+```
+virtualenv .
+```
+
+After that command, you can execute `source bin/activate` to setup the shell to
+use the right python version and library dependencies.
+
+Inside the activated environment, execute
+
+```
+pip install -r requirements.txt
+```
+
+to install all the python dependencies. At any point, if you have installed
+extra dependencies, execute `pip freeze` to see the currently installed
+packages. To persist these as dependencies, execute `pip freeze >
+requirements.txt`.
+
+In addition to the python directories, the following command line programs were
+used by importers, so make sure they are installed on your system..
+
+1. libreoffice
+2. imagemagick
+3. pdftotext
+4. tesseract
