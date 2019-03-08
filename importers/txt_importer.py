@@ -1,7 +1,7 @@
 def importer(filename):
-    file = open(filename, 'r')
-    contents = file.read()
-    file.close()
+    input_file = open(filename, 'r')
+    contents = input_file.read()
+    input_file.close()
     return contents;
 
 # test run:

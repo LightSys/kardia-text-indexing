@@ -7,17 +7,17 @@ def importer(filename, type):
     with tempfile.TemporaryDirectory() as tmpdir:
         if type == 'png':
             path = tmpdir + '/out'
-            f = open(os.devnull, "w")
-            subprocess.call(['tesseract', filename, path], stderr=f)
-            f.close()
+            redirected_output_file = open(os.devnull, "w")
+            subprocess.call(['tesseract', filename, path], stderr=redirected_output_file)
+            redirected_output_file.close()
         elif type == 'jpg':
-            path = tmpdir + 'out'
-            f = open(os.devnull, "w")
-            subprocess.call(['tesseract', filename, path], stderr=f)
-            f.close()
-        file = open(path+'.txt', 'r')
-        contents = file.read()
-        file.close()
+            path = tmpdir + '/out'
+            redirected_output_file = open(os.devnull, "w")
+            subprocess.call(['tesseract', filename, path], stderr=redirected_output_file)
+            redirected_output_file.close()
+        output_file = open(path+'.txt', 'r')
+        contents = output_file.read()
+        output_file.close()
 
     return contents;
 
