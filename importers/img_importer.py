@@ -1,22 +1,24 @@
 import subprocess
-from subprocess import Popen
-from subprocess import PIPE
-from subprocess import STDOUT
 import os
+import tempfile
 
 def importer(filename, type):
-    cmd = ''
-    if type == 'png':
-        f = open(os.devnull, "w")
-        subprocess.call(['tesseract', filename, 'out'], stderr=f)
-        f.close()
-    elif type == 'jpg':
-        f = open(os.devnull, "w")
-        subprocess.call(['tesseract', filename, 'out'], stderr=f)
-        f.close()
-    file = open('out.txt', 'r')
-    contents = file.read()
-    file.close()
+    contents = ''
+    with tempfile.TemporaryDirectory() as tmpdir:
+        if type == 'png':
+            path = tmpdir + '/out'
+            f = open(os.devnull, "w")
+            subprocess.call(['tesseract', filename, path], stderr=f)
+            f.close()
+        elif type == 'jpg':
+            path = tmpdir + 'out'
+            f = open(os.devnull, "w")
+            subprocess.call(['tesseract', filename, path], stderr=f)
+            f.close()
+        file = open(path+'.txt', 'r')
+        contents = file.read()
+        file.close()
+
     return contents;
 
 # test run:

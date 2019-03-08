@@ -1,15 +1,17 @@
 import subprocess
+import tempfile
 
 def importer(filename, type):
-    if type == 'docx':
-        subprocess.call(['pandoc', filename, '-f', 'docx', '-o', 'out.txt'])
-    elif type == 'odt':
-        subprocess.call(['pandoc', filename, '-f', 'odt', '-o', 'out.txt'])
-    file = open('out.txt', 'r')
-    contents = file.read()
-    file.close()
+    contents = ''
+    with tempfile.NamedTemporaryFile() as temp:
+        if type == 'docx':
+            subprocess.call(['pandoc', filename, '-f', 'docx', '-o', temp.name])
+        elif type == 'odt':
+            subprocess.call(['pandoc', filename, '-f', 'odt', '-o', temp.name])
+        temp.seek(0)
+        contents = temp.read().decode("utf-8")
     return contents;
 
 # test run:
-# UwU = importer('test.docx', 'docx')
+# UwU = importer('../test_files/test.docx', 'docx')
 # print(UwU)
