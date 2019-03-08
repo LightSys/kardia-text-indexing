@@ -116,11 +116,28 @@ class MySQLDataAccessor:
         self.cursor = self.database.cursor()
 
     def get_all_documents(self):
-        self.cursor.execute('select e_document_id, e_current_folder, e_current_filename from e_document')
+        cursor = self.database.cursor()
+        cursor.execute('select e_document_id, e_current_folder, e_current_filename from e_document')
         result = []
-        for (doc_id, curr_folder, curr_filename) in self.cursor.fetchall():
+        for (doc_id, curr_folder, curr_filename) in cursor.fetchall():
             filename = BASE_PATH + curr_folder + '/' + curr_filename
             result.append(Document(doc_id, filename))
+        return result
+
+    def get_all_words(self):
+        cursor = self.database.cursor()
+        cursor.execute('select e_word_id, e_word, e_word_relevance from e_text_search_word')
+        result = []
+        for (word_id, word_text, word_relevance) in cursor.fetchall():
+            result.append(Word(word_id, word_text, word_relevance))
+        return result
+
+    def get_all_occurrences(self):
+        cursor = self.database.cursor()
+        cursor.execute('select e_word_id, e_document_id, e_sequence, e_eol from e_text_search_occur')
+        result = []
+        for (w_id, d_id, seq, eol) in cursor.fetchall():
+            result.append(Occurrence(w_id, d_id, seq, None, eol))
         return result
 
     def put_word(self, word, relevance):
@@ -137,6 +154,7 @@ class MySQLDataAccessor:
     # Use document_id because we may not have the document
     def delete_document_occurrences(self, document_id):
         self.database.cursor().execute('delete from e_text_search_occur where e_document_id = %s', (document_id,))
+        self.database.commit()
 
     def delete_all_index_data(self):
         self.database.cursor().execute('delete from e_text_search_occur')
