@@ -7,6 +7,8 @@ import importers.pdf_importer as pdf
 import importers.doc_importer as doc
 import logging
 
+logging.basicConfig(level=logging.DEBUG)
+
 data_accessor = data_access.MySQLDataAccessor()
 
 def on_file_change():
