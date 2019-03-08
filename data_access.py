@@ -131,7 +131,10 @@ class MySQLDataAccessor:
         cursor.execute('select e_word_id, e_document_id, e_sequence, e_eol from e_text_search_occur')
         result = []
         for (w_id, d_id, seq, eol) in cursor.fetchall():
-            result.append(Occurrence(w_id, d_id, seq, None, eol))
+            is_eol = False
+            if eol == b'\x01':
+                is_eol = True
+            result.append(Occurrence(w_id, d_id, seq, None, is_eol))
         return result
 
     def put_word(self, word, relevance):

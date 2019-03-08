@@ -19,10 +19,10 @@ def index(document, importer, data_accessor):
     # be at the end of a line.
     total_index = 0
     for line in lines:
-        last_line_index = len(lines) - 1
+        last_line_index = len(line) - 1
         for (line_index, word) in enumerate(line):
             is_eol = False
-            if index == last_line_index:
+            if line_index == last_line_index:
                 is_eol = True
             data_accessor.put_word(word, 1.0)
             data_accessor.add_occurrence(word, document, total_index, is_eol)
@@ -36,4 +36,5 @@ def smart_index(document, importer_associations, data_accessor):
     for (pattern, importer) in importer_associations:
         if fnmatch.fnmatch(document.filename, pattern):
             logging.info('selecting "%s" pattern for <doc %d>' % (pattern, document.id))
+            remove_document(document.id, data_accessor)
             index(document, importer, data_accessor)
