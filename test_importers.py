@@ -25,5 +25,10 @@ class TestImporters(unittest.TestCase):
         actual = pdf.importer('test_files/small.pdf')
         self.assertEqual(actual, expected)
 
+    def test_png_importer(self):
+        expected = "This is a test PNG.\nHopefully, this text will be seen and interpreted properly.\nThat's the goal, anyway.\n"
+        actual = img.importer('test_files/test.png', 'png')
+        self.assertEqual(actual, expected)
+
 if __name__ == '__main__':
     unittest.main()
