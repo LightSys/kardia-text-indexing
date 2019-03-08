@@ -279,22 +279,3 @@ class RestApiDataAccessor:
 
     def flush(self):
         pass
-
-# Retrieves a list of all the documents in the database currently.
-# def get_all_documents(self):
-
-# Makes sure that the database already has the specified word stored. If the
-# word is already stored, this should do nothing.
-# def put_word(self, word, relevance):
-
-# This should delete all items from the occurrences table referencing the specified document.
-# def delete_document_occurrences(self, document):
-
-# def add_relationship(self, word, target_word, relevance):
-
-# def add_occurrence(self, word_text, document, sequence, is_eol):
-
-# This function is part of the interface to allow data accessors to support
-# batching of commands. For example, a SQL backend may build up a single query
-# and send all the commands all at once.
-# def flush(self):
