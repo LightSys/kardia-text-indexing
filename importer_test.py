@@ -2,6 +2,7 @@ import unittest
 import importers.txt_importer as txt
 import importers.doc_importer as doc
 import importers.PDF_importer as pdf
+import importers.img_importer as img
 
 class TestAdd(unittest.TestCase):
 
@@ -26,6 +27,11 @@ class TestAdd(unittest.TestCase):
     def test_pdf_importer(self):
         expected = "Hello my\nfriend, this is\nan example of\na fantastically\ncrafted test\nfile. For this\n\n\x0ctest, I have\ncreated a PDF\nfile that is\nthree pages\nlong, and it\nshould be\n\n\x0cable to read\nall of this.\n\n\x0c"
         actual = pdf.importer('test_files/test.pdf')
+        self.assertEqual(actual, expected)
+
+    def test_png_importer(self):
+        expected = "This is a test PNG.\nHopefully, this text will be seen and interpreted properly.\nThat's the goal, anyway.\n"
+        actual = img.importer('test_files/test.png', 'png')
         self.assertEqual(actual, expected)
 
 if __name__ == '__main__':
