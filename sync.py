@@ -3,14 +3,12 @@ import tokenize
 import os
 import indexer
 import time
-import importers.txt_importer as txt
-import importers.pdf_importer as pdf
-import importers.doc_importer as doc
+import logging
 
 INDEX_FILE='./index_events'
 
 def get_file_modified_date(filename):
-    return os.path.getmtime(filename)
+        return os.path.getmtime(filename)
 
 def get_indexing_state():
     result = {}
@@ -28,47 +26,52 @@ def get_indexing_state():
     return result
 
 def append_log(doc_id):
-    f = open(INDEX_FILE, 'a')
-    f.write(str(doc_id) + ':' + str(time.time()) + '\n')
+    try:
+        f = open(INDEX_FILE, 'a')
+        f.write(str(doc_id) + ':' + str(time.time()) + '\n')
+    except Exception as e:
+        logging.warning('Failed to append to the index_events file')
+        logging.warning(str(e))
 
 def append_log_removal(doc_id):
-    f = open(INDEX_FILE, 'a')
-    f.write(str(doc_id) + ':removed\n')
+    try:
+        f = open(INDEX_FILE, 'a')
+        f.write(str(doc_id) + ':removed\n')
+    except Exception as e:
+        logging.warning('Failed to append to the index_events file')
+        logging.warning(str(e))
 
 def synchronize(importer_associations, data_accessor):
     indexed_documents = get_indexing_state()
     documents = data_accessor.get_all_documents()
     for document in documents:
-        print('document found', document.id)
+        logging.debug('Processing <doc %d>' % document.id)
         if document.id in indexed_documents:
-            file_last_modified = get_file_modified_date(document.filename)
-            file_last_indexed = indexed_documents[document.id]
-            print(file_last_modified, file_last_indexed)
-            if file_last_modified > file_last_indexed:
-                print('re-indexing document:', document.id)
-                indexer.remove_document(document.id, data_accessor)
-                indexer.smart_index(document, importer_associations, data_accessor)
-                append_log(document.id)
+            if os.path.isfile(document.filename):
+                try:
+                    file_last_modified = get_file_modified_date(document.filename)
+                    file_last_indexed = indexed_documents[document.id]
+                    if file_last_modified > file_last_indexed:
+                        logging.info('Reindexing <doc %d>' % document.id)
+                        indexer.remove_document(document.id, data_accessor)
+                        indexer.smart_index(document, importer_associations, data_accessor)
+                        append_log(document.id)
+                except Exception as e:
+                    logging.error(str(e))
+            else:
+                logging.warning('<doc %d> points to a nonexistent file.' % document.id)
+                logging.warning(document.filename)
         else:
-            print('indexing document:', document.id)
+            logging.info('Indexing <doc %d>' % document.id)
             indexer.smart_index(document, importer_associations, data_accessor)
             append_log(document.id)
     doc_ids = {d.id for d in documents}
-    print(list(doc_ids))
     for indexed_doc_id in indexed_documents:
         if indexed_doc_id not in doc_ids:
-            print('removing document:', indexed_doc_id)
-            indexer.remove_document(indexed_doc_id, data_accessor)
-            append_log_removal(indexed_doc_id)
-
-data_accessor = data_access.MySQLDataAccessor()
-
-for d in data_accessor.get_all_documents():
-    print(d)
-
-print('synchronizing')
-synchronize([
-    ('*.txt', txt.importer),
-    ('*.docx', lambda filename: doc.importer(filename, 'docx')),
-    ('*.odt', lambda filename: doc.importer(filename, 'odt')),
-    ('*.pdf', pdf.importer)], data_accessor)
+            print('Removing <doc %d>' % indexed_doc_id)
+            try:
+                indexer.remove_document(indexed_doc_id, data_accessor)
+                append_log_removal(indexed_doc_id)
+            except Exception as e:
+                logging.error('Attempting to remove <doc %d>' % indexed_doc_id)
+                logging.error(str(e))

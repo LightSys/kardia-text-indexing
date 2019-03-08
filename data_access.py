@@ -1,17 +1,11 @@
 import requests
 import logging
-import http.client as http_client
 import json
 import datetime
 import os
 import MySQLdb
 from dotenv import load_dotenv
 load_dotenv()
-#logging.basicConfig()
-#logging.getLogger().setLevel(logging.DEBUG)
-#requests_log = logging.getLogger('requests.packages.urllib3')
-#requests_log.setLevel(logging.DEBUG)
-#requests_log.propagate = True
 
 BASE_PATH = '/usr/local/src/cx-git/centrallix-os'
 SERVER_PREFIX = 'http://10.5.11.230:800'
@@ -91,10 +85,10 @@ def get_all_resource(resource_name, resource_maker):
         objs = json_from_response(response)
         for o_id in objs:
             if o_id != '@id':
-                print('got', resource_name, o_id)
                 yield resource_maker(objs[o_id])
     else:
-        print('Request for all ' + resource_name + ' yielded bad response:', response)
+        logging.error('Request for all %s yielded bad response.' % resource_name)
+        logging.error(response.content)
 
 def get_all_words():
     return get_all_resource('e_text_search_word', word_from_json)
@@ -168,7 +162,7 @@ class MySQLDataAccessor:
         cursor.execute('select max(e_word_id) from e_text_search_word')
         (max_word_id,) = cursor.fetchone()
         if not max_word_id: max_word_id = 0
-        print('max_id is', max_word_id)
+        logging.info('Max word_id %d' % max_word_id)
         self.database.cursor().executemany(
             '''insert into e_text_search_word
                  (e_word_id, e_word, e_word_relevance, s_date_created, s_created_by, s_date_modified, s_modified_by) 
@@ -200,7 +194,6 @@ class MySQLDataAccessor:
             map(lambda t: (t[0], t[1], t[2], username, username), self.pending_relationships))
         self.database.commit()
         self.pending_relationships = []
-            
 
 class RestApiDataAccessor:
     def __init__(self):
@@ -213,7 +206,8 @@ class RestApiDataAccessor:
             content = json.loads(response.content.decode('utf8'))
             self.token = content['akey']
         else:
-            print('Getting the access token failed')
+            logging.error('Getting the access token failed')
+            logging.error(response.content)
         self.all_words = {word.text: word for word in get_all_words()}
         self.all_occurrences = {}
         for occurrence in get_all_occurrences():
@@ -248,9 +242,10 @@ class RestApiDataAccessor:
             if response.ok:
                 word = word_from_json(json_from_response(response))
                 self.all_words[word.text] = word
-                print('Put word', word.text)
+                logging.info('Put word %s' % word.text)
             else:
-                print('Failed to create new word')
+                logging.error('Failed to create new word')
+                logging.error(response.content)
 
     def add_occurrence(self, word_text, document_id, sequence, is_eol):
         word_id = self.all_words[word_text].id
@@ -262,10 +257,11 @@ class RestApiDataAccessor:
         if response.ok:
             occurrence = occurrence_from_json(json_from_response(response))
             self.all_occurrences[occurrence.document_id].append(occurrence)
-            print('Added_occurence', word_text)
+            logging.info('Added_occurence %s' % word_text)
             return occurrence
         else:
-            print('Failed to create new occurrence')
+            logging.error('Failed to create new occurrence')
+            logging.error(response.content)
 
     def add_relationship(self, word, target_word, relevance):
         response = self.create_resource('e_text_search_rel',
@@ -273,7 +269,8 @@ class RestApiDataAccessor:
         if response.ok:
             return relationship_from_json(json_from_response(response))
         else:
-            print('Failed to create new occurrence')
+            logging.error('Failed to create new occurrence')
+            logging.error(response.content)
 
     def delete_document_occurrences(self, document_id):
         for res_id in self.all_occurrences[document_id]:

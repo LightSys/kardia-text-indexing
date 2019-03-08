@@ -6,9 +6,10 @@ class MyHandler(FileSystemEventHandler):
     def __init__(self, f):
         self.callback = f
     def on_any_event(self, event):
-        self.callback()
+        if not event.is_directory:
+            self.callback()
 
-def watch(f, path)
+def watch(f, path):
     event_handler = MyHandler(f)
     observer = Observer()
     observer.schedule(event_handler, path=path, recursive=True)

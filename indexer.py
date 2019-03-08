@@ -2,6 +2,7 @@ import tokenizer
 import requests
 import importers.txt_importer as i
 import fnmatch
+import logging
 
 # This function adds all indexing data for a particular document to the
 # database. It uses the data_access, so this code does not directly touch the
@@ -34,4 +35,5 @@ def remove_document(document_id, data_accessor):
 def smart_index(document, importer_associations, data_accessor):
     for (pattern, importer) in importer_associations:
         if fnmatch.fnmatch(document.filename, pattern):
+            logging.info('selecting "%s" pattern for <doc %d>' % (pattern, document.id))
             index(document, importer, data_accessor)
