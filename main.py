@@ -7,6 +7,8 @@ import importers.pdf_importer as pdf
 import importers.doc_importer as doc
 import logging
 
+logging.basicConfig(level=logging.DEBUG)
+
 data_accessor = data_access.MySQLDataAccessor()
 
 def on_file_change():
@@ -14,8 +16,8 @@ def on_file_change():
     try:
         sync.synchronize([
             ('*.txt', txt.importer),
-            ('*.docx', lambda filename: doc.importer(filename, 'docx')),
-            ('*.odt', lambda filename: doc.importer(filename, 'odt')),
+            ('*.docx', doc.importer),
+            ('*.odt', doc.importer),
             ('*.pdf', pdf.importer)], data_accessor)
     except Exception as e:
         logging.error('Attempted to synchronize')

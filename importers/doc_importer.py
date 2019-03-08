@@ -1,17 +1,18 @@
 import subprocess
 import tempfile
+import os
 
-def importer(filename, type):
+def importer(filename):
     contents = ''
-    with tempfile.NamedTemporaryFile() as temp:
-        if type == 'docx':
-            subprocess.call(['pandoc', filename, '-f', 'docx', '-o', temp.name])
-        elif type == 'odt':
-            subprocess.call(['pandoc', filename, '-f', 'odt', '-o', temp.name])
-        temp.seek(0)
-        contents = temp.read().decode("utf-8")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        f = open(tmpdir+'/file.txt', "w")
+        subprocess.call(['soffice', '--cat', filename], stdout=f)
+        f.close()
+        f = open(tmpdir+'/file.txt', "r")
+        contents = f.read()
+        f.close()
     return contents;
 
 # test run:
-# UwU = importer('../test_files/test.docx', 'docx')
+# UwU = importer('../test_files/test.odt')
 # print(UwU)
