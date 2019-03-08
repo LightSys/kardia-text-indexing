@@ -104,10 +104,10 @@ class MySQLDataAccessor:
         (username, password) = get_auth()
         self.username = username
         self.database = MySQLdb.connect(user=username, passwd=password, db='Kardia_DB')
+        self.database.autocommit(True)
         self.pending_words = []
         self.pending_occurrences = []
         self.pending_relationships = []
-        self.cursor = self.database.cursor()
 
     def get_all_documents(self):
         cursor = self.database.cursor()

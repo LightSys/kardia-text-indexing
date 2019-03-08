@@ -35,9 +35,9 @@ The tool has several parts.
    indexed, then we know that it should be re-indexed. In addition, if the is a
    document which is logged in the `index_events` file but is not in the
    documents table in the database, then we must remove it from the index.
-6. *Filesystem monitering* allows the tool to be set off running as a
-   long-running process. Whenever an file changes in the specified directory,
-   the synchronization stage is kicked off again.
+6. *Database polling* allows the tool to be set off running as a long-running
+   process. Every fixed amoutn of time the synchronization stage is kicked off
+   again.
 
 
 ## Extending and configuring
