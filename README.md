@@ -10,12 +10,12 @@ manner.
 
 The tool has several parts.
 
-1. *Importers* convert files into a list of strings, which represents the lines
+1. *Importers* convert files into a string, which represents the lines
    of the file. Importers for various filetypes exist, including txt, odt,
    docx, pdf, png, and jpeg. Image-based files (which includes image-based
    pdfs) use the Tesseract OCR library, which is currently poorly tuned, so the
    default configuration of this tool does not use the image importers.
-2. *Tokenization* converts the list of strings into a list of lists of strings.
+2. *Tokenization* converts the string into a list of lists of strings.
    That is, we've broken the file into a list of lines, with each line being a
    list of words. The reason we maintain each line as its own list is that we
    want to be able to detect when a word is at the end of a line.
