@@ -19,22 +19,31 @@ def index(document, importer, data_accessor):
     # be at the end of a line.
     total_index = 0
     for line in lines:
+	# Find the number of words in the current line and subtract 1 to find
+	# the index of the last word in the line.
         last_line_index = len(line) - 1
         for (line_index, word) in enumerate(line):
-            is_eol = False
+            is_end_of_line = False
+	    # If the current word is the last word in the line, then say that
+	    # the word is at the end of the line.
             if line_index == last_line_index:
-                is_eol = True
+                is_end_of_line = True
             data_accessor.put_word(word, 1.0)
-            data_accessor.add_occurrence(word, document, total_index, is_eol)
+            data_accessor.add_occurrence(word, document, total_index, is_end_of_line)
             total_index += 1
     data_accessor.flush()
 
 def remove_document(document_id, data_accessor):
     data_accessor.delete_document_occurrences(document_id)
 
+# Indexes a document, but checks it's filename pattern to make a decision about
+# which importer to use.
 def smart_index(document, importer_associations, data_accessor):
     for (pattern, importer) in importer_associations:
         if fnmatch.fnmatch(document.filename, pattern):
             logging.info('selecting "%s" pattern for <doc %d>' % (pattern, document.id))
+	    # We might as well remove the document every time we index. When
+	    # the document is not already in the database, the remove function
+	    # will do nothing.
             remove_document(document.id, data_accessor)
             index(document, importer, data_accessor)
