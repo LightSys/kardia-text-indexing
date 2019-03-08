@@ -16,7 +16,7 @@ def watch(f, path)
 
     try:
         while True:
-            time.sleep(10))
+            time.sleep(10)
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
