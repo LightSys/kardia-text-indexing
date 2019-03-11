@@ -6,11 +6,11 @@ import datetime
 import os
 from dotenv import load_dotenv
 load_dotenv()
-logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
-requests_log = logging.getLogger('requests.packages.urllib3')
-requests_log.setLevel(logging.DEBUG)
-requests_log.propagate = True
+#logging.basicConfig()
+#logging.getLogger().setLevel(logging.DEBUG)
+#requests_log = logging.getLogger('requests.packages.urllib3')
+#requests_log.setLevel(logging.DEBUG)
+#requests_log.propagate = True
 
 BASE_PATH = '/usr/local/src/cx-git/centrallix-os'
 SERVER_PREFIX = 'http://10.5.11.230:800'
