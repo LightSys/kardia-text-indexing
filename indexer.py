@@ -25,7 +25,7 @@ def index(document, importer, data_accessor):
                 is_eol = True
 
             data_accessor.put_word(word, 1.0)
-            data_accessor.add_occurrence(word, document, total_index, is_eol)
+            data_accessor.add_occurrence(word, document.id, total_index, is_eol)
         total_index += 1
 
 def remove_from_index(document, data_accessor):
