@@ -9,6 +9,7 @@ from nltk.tokenize import RegexpTokenizer
 import string
 
 def tokenize(imported_string):
+    # remove punctuation and empty strings
     imported_string = imported_string.translate(str.maketrans('','',string.punctuation))
     string_array = imported_string.split("\n")
     tokenizer = RegexpTokenizer('\w+')
