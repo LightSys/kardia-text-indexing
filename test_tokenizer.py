@@ -56,5 +56,18 @@ class TestImporters(unittest.TestCase):
         actual = tokenize(text)
         self.assertEqual(actual, expected)
 
+    def test_hyphens_and_nums(self):
+        """test file hyphens_and_nums.txt. tests hyphens, numbers, and smart quotes"""
+        text = txt.importer('test_files/hyphens_and_nums.txt')
+        expected = [["co", "creators", "of", "ice", "cream", "are", "happy"],
+                    ["some", "people", "buy", "cones", "a", "day", "and", "sales", "went", "up"],
+                    ["23", "in", "the", "last", "45", "years", "this", "was"],
+                    ["especially", "noticeable", "in", "2019", "yum"],
+                    ["user", "littlesnowman", "88", "doesn't", "like", "the", "cold", "but", "he", "does", "like", "ice", "cream"],
+                    ["quoth", "littlesnowman", "88", "it's", "almost", "as", "good", "as", "raspberries"],
+                    ["i", "got", "99", "problems", "but", "ice", "cream", "aint", "one"]]
+        actual = tokenize(text)
+        self.assertEqual(actual, expected)
+
 if __name__ == '__main__':
     unittest.main()

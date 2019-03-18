@@ -11,14 +11,15 @@ import string
 def tokenize(imported_string):
     punctuation = '!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~'  # same as string.punctuation, but allows for apostrophes
 
-    # TODO: convert smart apostrophes ("’") to regular apostrophes ("'")
+    # convert smart apostrophes "’" to regular apostrophes "'"
+    imported_string = imported_string.translate(str.maketrans("’", "'"))
     imported_string = imported_string.lower()
     string_array = imported_string.split("\n")
     # a word is one or more letters, optionally followed by an apostrophe and more letters
     # or a number with at least 2 digits (note: currently this will split "abc123def" into ["abc", "123", "def"])
-    "[a-z]+('[a-z]+)?" # something wrong here
-    tokenizer = RegexpTokenizer("[a-z|']+|[0-9]{2,}")  # words are numbers
+    # TODO: figure out why "[a-z]+('[a-z]+)?|[0-9]{2,}" doesn't work
+    tokenizer = RegexpTokenizer("[a-z|']+|[0-9]{2,}")
     words = []
     for idx, elem in enumerate(string_array):
         words.append(tokenizer.tokenize(elem))
-    return words;
+    return words
