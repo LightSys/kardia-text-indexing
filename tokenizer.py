@@ -9,9 +9,6 @@ from nltk.tokenize import RegexpTokenizer
 import string
 
 def tokenize(imported_string):
-    punctuation = '!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~'  # same as string.punctuation, but allows for apostrophes
-
-    # convert smart apostrophes "’" to regular apostrophes "'"
     imported_string = imported_string.translate(str.maketrans("’", "'"))
     imported_string = imported_string.lower()
     string_array = imported_string.split("\n")
