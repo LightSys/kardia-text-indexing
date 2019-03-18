@@ -5,7 +5,8 @@
 #     the newline character
 # 2. Tokenize the words from the array of strings
 
-from nltk.tokenize import RegexpTokenizer
+from nltk.tokenize import RegexpTokenizer, word_tokenize
+from nltk.corpus import stopwords
 import string
 
 def tokenize(imported_string):
@@ -19,7 +20,14 @@ def tokenize(imported_string):
     # or a number with at least 2 digits (note: currently this will split "abc123def" into ["abc", "123", "def"])
     # TODO: figure out why "[a-z]+('[a-z]+)?|[0-9]{2,}" doesn't work
     tokenizer = RegexpTokenizer("[a-z|']+|[0-9]{2,}")
+    stopWords = set(stopwords.words('english')) #makes a dict of stopwords
+
     words = []
+    wordsFiltered = []
     for idx, elem in enumerate(string_array):
         words.append(tokenizer.tokenize(elem))
-    return words
+    for word in words:
+        for w in word: #each word in word is a list
+            if w not in stopWords:
+                wordsFiltered.append(w)
+    return wordsFiltered;
