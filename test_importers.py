@@ -2,6 +2,7 @@ import unittest
 import importers.txt_importer as txt
 import importers.doc_importer as doc
 import importers.pdf_importer as pdf
+import importers.img_importer as img
 
 class TestImporters(unittest.TestCase):
 
@@ -12,12 +13,12 @@ class TestImporters(unittest.TestCase):
 
     def test_docx_importer(self):
         expected = "multiple lines in a\n\nword file with formatting.\n"
-        actual = doc.importer('test_files/small.docx', 'docx')
+        actual = doc.importer('test_files/small.docx')
         self.assertEqual(actual, expected)
 
     def test_odt_importer(self):
         expected = "multiple lines in a\n\nlibreoffice file with formatting."
-        actual = doc.importer('test_files/small.odt', 'odt')
+        actual = doc.importer('test_files/small.odt')
         self.assertEqual(actual.strip(), expected)
 
     def test_pdf_importer(self):

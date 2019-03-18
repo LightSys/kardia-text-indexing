@@ -9,10 +9,14 @@ from nltk.tokenize import RegexpTokenizer
 import string
 
 def tokenize(imported_string):
-    imported_string = imported_string.translate(str.maketrans('','',string.punctuation))
+    imported_string = imported_string.translate(str.maketrans("’", "'"))
+    imported_string = imported_string.lower()
     string_array = imported_string.split("\n")
-    tokenizer = RegexpTokenizer('\w+')
+    # a word is one or more letters, optionally followed by an apostrophe and more letters
+    # or a number with at least 2 digits (note: currently this will split "abc123def" into ["abc", "123", "def"])
+    # TODO: figure out why "[a-z]+('[a-z]+)?|[0-9]{2,}" doesn't work
+    tokenizer = RegexpTokenizer("[a-z|']+|[0-9]{2,}")
     words = []
     for idx, elem in enumerate(string_array):
         words.append(tokenizer.tokenize(elem))
-    return words;
+    return words
