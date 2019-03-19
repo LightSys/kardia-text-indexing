@@ -1,8 +1,14 @@
+'''
+author: Andrew Thomas
+Code-a-thon 2019
+'''
+
 import cv2
 import subprocess
 import pytesseract
 from PIL import Image
 import os
+import sys
 import tempfile
 
 
@@ -23,11 +29,20 @@ def importer(filename, type):
         # Process image
         img = cv2.imread(outfile, 0)
         text = pytesseract.image_to_string(Image.fromarray(img))
-        contents = text.split()
+        lines = text.split('\n')
+
+        contents = []
+        for line in lines:
+            if line != '':
+                contents.append(line.split())
 
     return contents;
 
 if __name__ == '__main__':
+    '''
+    To run:
+    python3 <img_importer path> <image path> <image file extension>
+    '''
     # test run:
-    UwU = importer('/Users/andrewthomas/kardia-text-indexing/andrewTest/loyal.jpg', 'jpg')
+    UwU = importer(str(sys.argv[1]), str(sys.argv[2]))
     print(UwU)
