@@ -66,5 +66,15 @@ class TestImporters(unittest.TestCase):
         actual = tokenize(text)
         self.assertEqual(actual, expected)
 
+    def test_phone_nums(self):
+        """test file phone_nums.txt. Tests phone numbers"""
+        text = txt.importer('test_files/phone_nums.txt')
+        expected = [["phone", "number", "000-123-4567"],
+                    ["call", "800-222-1359", "surprise"],
+                    ["congratulations", "call", "123.456.7890", "prize"],
+                    ["business", "card", "says", "800-555-1212x1234"]]
+        actual = tokenize(text)
+        self.assertEqual(actual, expected)
+
 if __name__ == '__main__':
     unittest.main()
