@@ -7,7 +7,6 @@
 
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
-import string
 
 def tokenize(imported_string):
     imported_string = imported_string.translate(str.maketrans("’", "'"))
@@ -18,7 +17,6 @@ def tokenize(imported_string):
     # TODO: figure out why "[a-z]+('[a-z]+)?|[0-9]{2,}" doesn't work
     tokenizer = RegexpTokenizer("[a-z|']+|[0-9]{2,}")
     stopWords = set(stopwords.words('english'))
-
     lines = []
     for idx, line in enumerate(string_array):
         real_line = []
@@ -28,6 +26,4 @@ def tokenize(imported_string):
                 real_line.append(word)
         if len(real_line) > 0:        
             lines.append(real_line)
-    
-    return lines;
-
+    return lines
