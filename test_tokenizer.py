@@ -11,14 +11,14 @@ class TestImporters(unittest.TestCase):
                     ["really", "whole", "lot", "hey"],
                     ["exist"]]
         actual = tokenize(text)
-        self.assertEqual(actual, expected)
+        self.assertEqual(expected, actual)
 
     def test_small(self):
         """test small.txt file"""
         text = txt.importer('test_files/small.txt')
         expected = [["multiple", "line"], ["text", "file"]]
         actual = tokenize(text)
-        self.assertEqual(actual, expected)
+        self.assertEqual(expected, actual)
 
     def test_professional(self):
         """test Professional_Test_Txt.txt file"""
@@ -51,7 +51,7 @@ class TestImporters(unittest.TestCase):
                     ["okay", "way", "woooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"],
                     ["welp", "that's"]]
         actual = tokenize(text)
-        self.assertEqual(actual, expected)
+        self.assertEqual(expected, actual)
 
     def test_hyphens_and_nums(self):
         """test file hyphens_and_nums.txt. tests hyphens, numbers, and smart quotes"""
@@ -64,7 +64,7 @@ class TestImporters(unittest.TestCase):
                     ["quoth", "littlesnowman", "88", "almost", "good", "raspberries"],
                     ["got", "99", "problems", "ice", "cream", "aint", "one"]]
         actual = tokenize(text)
-        self.assertEqual(actual, expected)
+        self.assertEqual(expected, actual)
 
     def test_phone_nums(self):
         """test file phone_nums.txt. Tests phone numbers"""
@@ -74,7 +74,7 @@ class TestImporters(unittest.TestCase):
                     ["congratulations", "call", "123.456.7890", "prize"],
                     ["business", "card", "says", "800-555-1212x1234"]]
         actual = tokenize(text)
-        self.assertEqual(actual, expected)
+        self.assertEqual(expected, actual)
 
     def test_emails(self):
         """test file emails.txt. Tests emails"""
