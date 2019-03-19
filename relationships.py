@@ -23,12 +23,18 @@ def add_relationships(word, data_accessor):
     synsets = wordnet.synsets(word)
     for syn in synsets:
         add_relationships_synset(word, syn, 0.99, data_accessor)
-        for hypernym in syn.closure(lambda s: s.hypernyms()):
-            relevance = hypernym.path_similarity(syn)
-            add_relationships_synset(word, hypernym, relevance, data_accessor)
-        for hyponym in syn.closure(lambda s: s.hyponyms()):
-            relevance = hyponym.path_similarity(syn)
-            add_relationships_synset(word, hyponym, relevance, data_accessor)
+        for path_hypernym in syn.closure(lambda s: s.path_hypernyms()):
+            relevance = path_hypernym.path_similarity(syn)
+            add_relationships_synset(word, path_hypernym, relevance, data_accessor)
+        for substance_hypernym in syn.closure(lambda s: s.substance_hypernyms()):
+            relevance = substance_hypernym.path_similarity(syn)
+            add_relationships_synset(word, substance_hypernym, relevance, data_accessor)
+        for path_hyponym in syn.closure(lambda s: s.path_hyponyms()):
+            relevance = path_hyponym.path_similarity(syn)
+            add_relationships_synset(word, path_hyponym, relevance, data_accessor)
+        for substance_hyponym in syn.closure(lambda s: s.substance_hyponyms()):
+            relevance = substance_hyponym.path_similarity(syn)
+            add_relationships_synset(word, substance_hyponym, relevance, data_accessor)
         for meronym in syn.closure(lambda s: s.meronyms()):
             relevance = meronym.path_similarity(syn)
             add_relationships_synset(word, meronym, relevance, data_accessor)
