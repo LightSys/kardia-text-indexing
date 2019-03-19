@@ -24,7 +24,8 @@ def tokenize(imported_string):
              "[a-z]+(?:'[a-z]+)?|" \
              "(\d{3})\D*(\d{3})\D*(\d{4})\D*(\d*)|" \
              "[0-9]{2,}"
-    regexp = "[a-z]+(?:'[a-z]+)?|" \
+    regexp = "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9]+|" \
+             "[a-z]+(?:'[a-z]+)?|" \
              "\d{3}\D*\d{3}\D*\d{4}(?:\D*\d+)?|" \
              "[0-9]{2,}"
     tokenizer = RegexpTokenizer(regexp)

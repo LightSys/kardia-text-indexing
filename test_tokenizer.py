@@ -76,5 +76,14 @@ class TestImporters(unittest.TestCase):
         actual = tokenize(text)
         self.assertEqual(actual, expected)
 
+    def test_emails(self):
+        """test file emails.txt. Tests emails"""
+        text = txt.importer('test_files/emails.txt')
+        expected = [["sending", "message", "recipient@domain.com", "hope", "receive"],
+                    ["email", "first_middle-last.@something.net", "hear"],
+                    ["need", "email", "2734-whoareyou@somewhere.org"]]
+        actual = tokenize(text)
+        self.assertEqual(expected, actual)
+
 if __name__ == '__main__':
     unittest.main()
