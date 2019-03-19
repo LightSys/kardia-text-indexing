@@ -28,5 +28,5 @@ def tokenize(imported_string):
     # tokenizer = RegexpTokenizer("[a-z|']+|[0-9]{2,}")
     lines = []
     for idx, elem in enumerate(string_array):
-        words.append(tokenizer.tokenize(elem))
+        lines.append(tokenizer.tokenize(elem))
     return lines;
