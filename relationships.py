@@ -13,6 +13,7 @@ from nltk.corpus import wordnet
 
 def add_relationships_synset(word, synset, relevance, data_accessor):
     for lemma in synset.lemmas():
+        print("adding lemma", lemma.name())
         data_accessor.add_relationship(word, lemma.name(), relevance)
         for form in lemma.derivationally_related_forms():
             data_accessor.add_relationship(word, form.name(), relevance - 0.01)
