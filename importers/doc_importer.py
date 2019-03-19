@@ -5,6 +5,7 @@ Code-a-thon 2019
 import textract
 import tempfile
 from bs4 import UnicodeDammit
+import sys
 
 def importer(file_path):
     text = UnicodeDammit(textract.process(file_path)).unicode_markup
@@ -16,5 +17,5 @@ def importer(file_path):
     return contents;
 
 if __name__ == '__main__':
-    UwU = importer('test_files/Professional_Test_Doc.odt')
+    UwU = importer(sys.argv[1])
     print(UwU[0])
