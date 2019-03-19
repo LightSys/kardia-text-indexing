@@ -191,8 +191,8 @@ class MySQLDataAccessor:
                    "(e_word_id, e_target_word_id, e_rel_relevance, "
                     "s_date_created, s_created_by, s_date_modified, s_modified_by) "
                "select w.e_word_id, tw.e_word_id, %s, now(), %s, now(), %s "
-               "from (select e_word_id from e_text_search_word where e_word = %s),"
-                " (select e_word_id from e_text_search_word where e_word = %s)",
+               "from (select e_word_id from e_text_search_word where e_word = %s) as w,"
+                " (select e_word_id from e_text_search_word where e_word = %s) as tw",
             map(lambda t: (t[0], t[1], t[2], username, username), self.pending_relationships))
         self.database.commit()
         self.pending_relationships = []
