@@ -26,18 +26,7 @@ def tokenize(imported_string):
              "[0-9]{2,}"
     tokenizer = RegexpTokenizer(regexp)
     # tokenizer = RegexpTokenizer("[a-z|']+|[0-9]{2,}")
-    stopWords = set(stopwords.words('english'))
     lines = []
-    for idx, line in enumerate(string_array):
-        real_line = []
-        # split line based on whitespace
-        # segments = line.split()
-        # for segment in segments:
-        #     pass
-        tokenized_line = tokenizer.tokenize(line)
-        for word in tokenized_line:
-            if word not in stopWords:
-                real_line.append(word)
-        if len(real_line) > 0:        
-            lines.append(real_line)
-    return lines
+    for idx, elem in enumerate(string_array):
+        lines.append(tokenizer.tokenize(elem))
+    return lines;
