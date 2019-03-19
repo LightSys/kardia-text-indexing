@@ -9,31 +9,32 @@ Relationships (in order of highest relevance factor to lowest relevance factor)
 7. entailment (implication)
 8. corpus.similar (appear in similar contexts)
 """
-
 from nltk.corpus import wordnet
 
-def get_relationships_synset(word, synset, relevance):
+def add_relationships_synset(word, synset, relevance, data_accessor):
     for lemma in synset.lemmas():
-        rel_tup = (word, lemma.name(), relevance)  # TODO: add this relationship to database
-        for name in lemma.derivationally_related_forms():
-            rel_tup = (word, lemma.name(), relevance - 0.01)  # TODO: add this relationship to database
+        data_accessor.add_relationship(word, lemma.name(), relevance)
+        for form in lemma.derivationally_related_forms():
+            data_accessor.add_relationship(word, form.name(), relevance - 0.01)
 
-def get_relationships(word):
+def add_relationships(word, data_accessor):
+    if word in data_accessor.get_all_words():
+        return  # we already indexed this word, don't get all the relationships again
     synsets = wordnet.synsets(word)
     for syn in synsets:
-        get_relationships_synset(word, syn, 0.99)
+        add_relationships_synset(word, syn, 0.99, data_accessor)
         for hypernym in syn.closure(lambda s: s.hypernyms()):
             relevance = hypernym.path_similarity(syn)
-            get_relationships_synset(word, hypernym, relevance)
+            add_relationships_synset(word, hypernym, relevance, data_accessor)
         for hyponym in syn.closure(lambda s: s.hyponyms()):
             relevance = hyponym.path_similarity(syn)
-            get_relationships_synset(word, hyponym, relevance)
+            add_relationships_synset(word, hyponym, relevance, data_accessor)
         for meronym in syn.closure(lambda s: s.meronyms()):
             relevance = meronym.path_similarity(syn)
-            get_relationships_synset(word, meronym, relevance)
+            add_relationships_synset(word, meronym, relevance, data_accessor)
         for holonym in syn.closure(lambda s: s.holonyms()):
             relevance = holonym.path_similarity(syn)
-            get_relationships_synset(word, holonym, relevance)
+            add_relationships_synset(word, holonym, relevance, data_accessor)
         for entailment in syn.closure(lambda s: s.entailments()):
             relevance = holonym.path_similarity(syn)
-            get_relationships_synset(word, entailment, relevance)
+            add_relationships_synset(word, entailment, relevance, data_accessor)

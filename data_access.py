@@ -241,7 +241,7 @@ class RestApiDataAccessor:
     def put_word(self, word, relevance):
         if word not in self.all_words:
             response = self.create_resource('e_text_search_word', 
-                    {'e_word': word, 'e_word_relevance': word_relevance})
+                    {'e_word': word, 'e_word_relevance': relevance})
             if response.ok:
                 word = word_from_json(json_from_response(response))
                 self.all_words[word.text] = word
