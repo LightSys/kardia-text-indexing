@@ -19,12 +19,8 @@ def tokenize(imported_string):
         a phone number, or a number with at least two digits.
     The order is such that more specific cases are checked first and general cases are checked later.
     '''
-    badregexp = "((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?|" \
-             "([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)|" \
-             "[a-z]+(?:'[a-z]+)?|" \
-             "(\d{3})\D*(\d{3})\D*(\d{4})\D*(\d*)|" \
-             "[0-9]{2,}"
-    regexp = "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9]+|" \
+    regexp = "(?:https?|ftp)://[^\s/$.?#].[^\s]*|" \
+             "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9]+|" \
              "[a-z]+(?:'[a-z]+)?|" \
              "\d{3}\D*\d{3}\D*\d{4}(?:\D*\d+)?|" \
              "[0-9]{2,}"
