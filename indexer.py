@@ -18,7 +18,7 @@ def index(document, importer, data_accessor):
     # then over each word in each line. When the `line_index` of the current
     # word matches the last word index of the current line, then that word must
     # be at the end of a line.
-    stopWords = set(stopwords.words('english'))
+    stop_words = set(stopwords.words('english'))
 
     total_index = 0
     for line in lines:
@@ -31,7 +31,7 @@ def index(document, importer, data_accessor):
 	    # the word is at the end of the line.
             if line_index == last_line_index:
                 is_end_of_line = True
-                if word in stopwords:
+                if word in stop_words:
                     data_accessor.put_word(word, 0.2)
                 else:
                     data_accessor.put_word(word, 1.0)
