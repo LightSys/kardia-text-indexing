@@ -13,12 +13,23 @@ from nltk.corpus import wordnet
 
 def add_relationships_synset(word, synset, relevance, data_accessor):
     print("word %s synset %s relevance %f" % (word, synset, relevance))
+    names = []  # track the words we've added so that we don't have duplicates
     for lemma in synset.lemmas():
         print("synset %s lemma %s relevance %f" % (synset.name(), lemma.name(), relevance))
-        data_accessor.add_relationship(word, lemma.name(), relevance)
+        name = lemma.name()
+        if name in names:
+            print("skipping duplicate", name)
+        else:
+            data_accessor.add_relationship(word, lemma.name(), relevance)
+            names.append(name)
         for form in lemma.derivationally_related_forms():
             print("synset %s lemma %s related form %s" % (synset.name(), lemma.name(), form.name()))
-            data_accessor.add_relationship(word, form.name(), relevance - 0.01)
+            name = form.name()
+            if name in names:
+                print("skipping duplicate", name)
+            else:
+                data_accessor.add_relationship(word, form.name(), relevance - 0.01)
+                names.append(name)
 
 def add_relationships(word, data_accessor, threshold = 0.5):
     if word in data_accessor.get_all_words():
