@@ -63,7 +63,7 @@ def add_relationships(word, data_accessor, threshold = 0.5):
     # a list of the words that we have already added relationships for. This list will be modified
     names = [word]  # because we don't want to add a relationship from word to word
     for syn in synsets:
-        add_relationships_synset(word, syn, 0.99, data_accessor)
+        add_relationships_synset(word, syn, 0.99, data_accessor, names)
         for relationship in relationship_funs:
             for related_syn in relationship(syn):
                 if related_syn in added_synsets:
