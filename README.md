@@ -191,3 +191,4 @@ used by importers, so make sure they are installed on your system..
 2. imagemagick
 3. pdftotext
 4. [tesseract](https://github.com/tesseract-ocr/tesseract)
+5. pulseaudio-libs-devel
