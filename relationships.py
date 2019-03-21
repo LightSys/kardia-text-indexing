@@ -12,6 +12,7 @@ Relationships (in order of highest relevance factor to lowest relevance factor)
 from nltk.corpus import wordnet
 
 def add_relationships_synset(word, synset, relevance, data_accessor):
+    print("word %s synset %s relevance %f" % (word, synset, relevance))
     for lemma in synset.lemmas():
         print("synset %s lemma %s relevance %f" % (synset.name(), lemma.name(), relevance))
         data_accessor.add_relationship(word, lemma.name(), relevance)
