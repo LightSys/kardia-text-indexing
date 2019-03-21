@@ -336,14 +336,13 @@ class MySQLDataAccessor:
         self.pending_occurrences = []
 
         self.database.cursor().executemany(
-            '''with w as (select e_word_id from e_text_search_word where e_word = %s),
-                    tw as (select e_word_id from e_text_search_word where e_word = %s)
-               insert into e_text_search_rel
-                   (e_word_id, e_target_word_id, e_rel_relevance, 
-                    s_date_created, s_created_by, s_date_modified, s_modified_by)
-               select w.e_word_id, tw.e_word_id, %s, now(), %s, now(), %s
-               from w, tw''',
-            map(lambda t: (t[0], t[1], t[2], username, username), self.pending_relationships))
+               "insert into e_text_search_rel "
+                   "(e_word_id, e_target_word_id, e_rel_relevance, "
+                    "s_date_created, s_created_by, s_date_modified, s_modified_by) "
+               "select w.e_word_id, tw.e_word_id, %s, now(), %s, now(), %s "
+               "from (select e_word_id from e_text_search_word where e_word = %s) as w,"
+                " (select e_word_id from e_text_search_word where e_word = %s) as tw",
+            map(lambda t: (t[2], username, username, t[0], t[1]), self.pending_relationships))
         self.database.commit()
         self.pending_relationships = []
 
@@ -390,7 +389,7 @@ class RestApiDataAccessor:
     def put_word(self, word, relevance):
         if word not in self.all_words:
             response = self.create_resource('e_text_search_word', 
-                    {'e_word': word, 'e_word_relevance': word_relevance})
+                    {'e_word': word, 'e_word_relevance': relevance})
             if response.ok:
                 word = word_from_json(json_from_response(response))
                 self.all_words[word.text] = word

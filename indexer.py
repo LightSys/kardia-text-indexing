@@ -4,6 +4,7 @@ import importers.txt_importer as i
 import fnmatch
 import logging
 from nltk.corpus import stopwords
+import relationships
 
 # This function adds all indexing data for a particular document to the
 # database. It uses the data_access, so this code does not directly touch the
@@ -22,16 +23,18 @@ def index(document, importer, data_accessor):
 
     total_index = 0
     for line in lines:
-	# Find the number of words in the current line and subtract 1 to find
-	# the index of the last word in the line.
+    # Find the number of words in the current line and subtract 1 to find
+    # the index of the last word in the line.
         last_line_index = len(line) - 1
         for (line_index, word) in enumerate(line):
             is_end_of_line = False
-	    # If the current word is the last word in the line, then say that
-	    # the word is at the end of the line.
+        # If the current word is the last word in the line, then say that
+        # the word is at the end of the line.
             if line_index == last_line_index:
                 is_end_of_line = True
             #Checks for stop words and assigns 0.2 to stopwords and 1.0 to other words
+            #add the relationships before the word because of the line in add_relationships that checks if word in data_accessor.get_all_words()
+            relationships.add_relationships(word, data_accessor)
             if word in stop_words:
                 data_accessor.put_word(word, 0.2)
             else:
@@ -49,8 +52,8 @@ def smart_index(document, importer_associations, data_accessor):
     for (pattern, importer) in importer_associations:
         if fnmatch.fnmatch(document.filename, pattern):
             logging.info('selecting "%s" pattern for <doc %d>' % (pattern, document.id))
-	    # We might as well remove the document every time we index. When
-	    # the document is not already in the database, the remove function
-	    # will do nothing.
+        # We might as well remove the document every time we index. When
+        # the document is not already in the database, the remove function
+        # will do nothing.
             remove_document(document.id, data_accessor)
             index(document, importer, data_accessor)
