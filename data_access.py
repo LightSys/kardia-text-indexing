@@ -183,15 +183,33 @@ def get_all_resource(resource_name, resource_maker):
         logging.error(response.content)
 
 def get_all_words():
+    """
+    Query the database using json to find all the words
+    :return: all the words in the database. Note: get_all_resource does yield not return
+    :rtype: Word
+    """
     return get_all_resource('e_text_search_word', word_from_json)
 
 def get_all_documents():
+    """
+    Query the database using json to find all the documents
+    :return: all the documents in the database. Note: get_all_resource does yield not return
+    :rtype: Document
+    """
     return get_all_resource('e_document', document_from_json)
 
 def get_all_occurrences():
+    """
+    Query the database using json to find all the word occurrences
+    :return: all the word occurrences in the database. Note: get_all_resource does yield not return
+    :rtype: Occurrence
+    """
     return get_all_resource('e_text_search_occur', occurrence_from_json)
 
 class MySQLDataAccessor:
+    """
+    Interface for Kardia database using MySQL
+    """
     def __init__(self):
         (username, password) = get_auth()
         self.username = username
@@ -202,6 +220,11 @@ class MySQLDataAccessor:
         self.pending_relationships = []
 
     def get_all_documents(self):
+        """
+        Query the database using MySQL to find all the documents
+        :return: a list of all the documents in the database
+        :rtype: list of Document
+        """
         cursor = self.database.cursor()
         cursor.execute('select e_document_id, e_current_folder, e_current_filename from e_document')
         result = []
@@ -211,6 +234,11 @@ class MySQLDataAccessor:
         return result
 
     def get_all_words(self):
+        """
+        Query the database using MySQL to find all the words
+        :return: a list of all the words in the database
+        :rtype: list of str
+        """
         cursor = self.database.cursor()
         cursor.execute('select e_word_id, e_word, e_word_relevance from e_text_search_word')
         result = []
@@ -219,6 +247,11 @@ class MySQLDataAccessor:
         return result
 
     def get_all_occurrences(self):
+        """
+        Query the database using MySQL to find all the word occurrences
+        :return: a list of all the word occurrences in the database
+        :rtype: list of Occurrence
+        """
         cursor = self.database.cursor()
         cursor.execute('select e_word_id, e_document_id, e_sequence, e_eol from e_text_search_occur')
         result = []
@@ -230,12 +263,28 @@ class MySQLDataAccessor:
         return result
 
     def put_word(self, word, relevance):
+        """
+        Add a word into the database. (Note: this adds the word to pending_words. You must call flush to actually add the word.)
+        :param word: the word to add
+        :type word: str
+        :param relevance: a measure of how useful the word is in a search (e.g., "email" is more relevant than "and").
+        :type relevance: float
+        :return: None
+        """
         self.pending_words.append((word, relevance))
-        pass
 
     def add_occurrence(self, word_text, document, sequence, is_eol):
+        """
+        Add an occurrence into the database. (Note: this adds the occurrence to pending_occurrences. You must call flush to actually add the occurrence.)
+        :param word_text: text of the word
+        :type word_text: str
+        :param document: the document the word occurs in
+        :type document: TODO: what is this
+        :param sequence:
+        :param is_eol:
+        :return:
+        """
         self.pending_occurrences.append((word_text, document.id, sequence, is_eol))
-        pass
 
     def add_relationship(self, word, target_word, relevance):
         self.pending_relationships.append((word, target_word, relevance))
