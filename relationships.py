@@ -34,7 +34,12 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
             pass
             # print("skipping duplicate lemma", name)
         else:
-            data_accessor.add_relationship(word, lemma.name(), relevance)
+            # TODO: figure out why duplicates are being added to database.
+            # For now, this line should fix the symptom until we can eventually figure out the cause
+            if name == word:
+                print("identity relationship from %s to %s" % (name, word))
+                continue
+            data_accessor.add_relationship(word, name, relevance)
             names.append(name)
         for form in lemma.derivationally_related_forms():
             # print("synset %s lemma %s related form %s" % (synset.name(), lemma.name(), form.name()))
@@ -43,7 +48,7 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
                 pass
                 # print("skipping duplicate form", name)
             else:
-                data_accessor.add_relationship(word, form.name(), relevance - 0.01)
+                data_accessor.add_relationship(word, name, relevance - 0.01)
                 names.append(name)
 
 def add_relationships(word, data_accessor, threshold = 0.5):
