@@ -20,7 +20,7 @@ def add_relationships_synset(word, synset, relevance, data_accessor):
             print("sysnset %s lemma %s related form %s" % (synset.name(), lemma.name(), form.name()))
             data_accessor.add_relationship(word, form.name(), relevance - 0.01)
 
-def add_relationships(word, data_accessor):
+def add_relationships(word, data_accessor, threshold = 0.5):
     if word in data_accessor.get_all_words():
         return  # we already indexed this word, don't get all the relationships again
     synsets = wordnet.synsets(word)
