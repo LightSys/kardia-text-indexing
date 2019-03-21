@@ -32,16 +32,16 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
         name = lemma.name()
         if name in names:
             pass
-            print("skipping duplicate lemma", name)
+            # print("skipping duplicate lemma", name)
         else:
             data_accessor.add_relationship(word, lemma.name(), relevance)
             names.append(name)
         for form in lemma.derivationally_related_forms():
-            print("synset %s lemma %s related form %s" % (synset.name(), lemma.name(), form.name()))
+            # print("synset %s lemma %s related form %s" % (synset.name(), lemma.name(), form.name()))
             name = form.name()
             if name in names:
                 pass
-                print("skipping duplicate form", name)
+                # print("skipping duplicate form", name)
             else:
                 data_accessor.add_relationship(word, form.name(), relevance - 0.01)
                 names.append(name)
@@ -67,7 +67,7 @@ def add_relationships(word, data_accessor, threshold = 0.5):
         for relationship in relationship_funs:
             for related_syn in relationship(syn):
                 if related_syn in added_synsets:
-                    print("skipping duplicate syn", related_syn)
+                    # print("skipping duplicate syn", related_syn)
                     continue
                 relevance = related_syn.path_similarity(syn)
                 if relevance < threshold:
