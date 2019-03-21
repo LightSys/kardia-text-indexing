@@ -6,7 +6,6 @@
 # 2. Tokenize the words from the array of strings
 
 from nltk.tokenize import RegexpTokenizer
-from nltk.corpus import stopwords
 import string
 
 def tokenize(imported_string):
