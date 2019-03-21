@@ -31,6 +31,7 @@ def index(document, importer, data_accessor):
 	    # the word is at the end of the line.
             if line_index == last_line_index:
                 is_end_of_line = True
+            #Checks for stop words and assigns 0.2 to stopwords and 1.0 to other words
             if word in stop_words:
                 data_accessor.put_word(word, 0.2)
             else:
