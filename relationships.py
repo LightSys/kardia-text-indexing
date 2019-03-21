@@ -13,8 +13,10 @@ from nltk.corpus import wordnet
 
 def add_relationships_synset(word, synset, relevance, data_accessor):
     for lemma in synset.lemmas():
+        print("synset %s lemma %s relevance %f" % (synset.name(), lemma.name(), relevance))
         data_accessor.add_relationship(word, lemma.name(), relevance)
         for form in lemma.derivationally_related_forms():
+            print("sysnset %s lemma %s related form %s" % (synset.name(), lemma.name(), form.name()))
             data_accessor.add_relationship(word, form.name(), relevance - 0.01)
 
 def add_relationships(word, data_accessor):
