@@ -280,13 +280,21 @@ class MySQLDataAccessor:
         :type word_text: str
         :param document: the document the word occurs in
         :type document: TODO: what is this
-        :param sequence:
-        :param is_eol:
+        :param sequence: TODO: what is this
+        :param is_eol: indicates whether the occurrence is at the end of the line
+        :type is_eol: bool
         :return:
         """
         self.pending_occurrences.append((word_text, document.id, sequence, is_eol))
 
     def add_relationship(self, word, target_word, relevance):
+        """
+        Add a relationship
+        :param word:
+        :param target_word:
+        :param relevance:
+        :return:
+        """
         self.pending_relationships.append((word, target_word, relevance))
 
     # Use document_id because we may not have the document
