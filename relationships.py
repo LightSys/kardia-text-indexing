@@ -29,19 +29,19 @@ def add_relationships(word, data_accessor):
         for hyponym in syn.closure(lambda s: s.hyponyms()):
             relevance = hyponym.path_similarity(syn)
             add_relationships_synset(word, hyponym, relevance, data_accessor)
-        for part_meronym in syn.closure(lambda s: s.part_meronyms()):
+        for part_meronym in syn.part_meronyms():
             relevance = part_meronym.path_similarity(syn)
             add_relationships_synset(word, part_meronym, relevance, data_accessor)
-        for substance_meronym in syn.closure(lambda s: s.substance_meronyms()):
+        for substance_meronym in syn.substance_meronyms():
             relevance = substance_meronym.path_similarity(syn)
             add_relationships_synset(word, substance_meronym, relevance, data_accessor)
-        for part_holonym in syn.closure(lambda s: s.part_holonyms()):
+        for part_holonym in syn.part_holonyms():
             relevance = part_holonym.path_similarity(syn)
             add_relationships_synset(word, part_holonym, relevance, data_accessor)
-        for substance_holonym in syn.closure(lambda s: s.substance_holonyms()):
+        for substance_holonym in syn.substance_holonyms():
             relevance = substance_holonym.path_similarity(syn)
             add_relationships_synset(word, substance_holonym, relevance, data_accessor)
-        for entailment in syn.closure(lambda s: s.entailments()):
+        for entailment in syn.entailments():
             relevance = entailment.path_similarity(syn)
             add_relationships_synset(word, entailment, relevance, data_accessor)
 
