@@ -36,7 +36,8 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
         else:
             # TODO: figure out why duplicates are being added to database.
             # For now, this line should fix the symptom until we can eventually figure out the cause
-            print("name %s type %s word %s" % (name, type(name), word))
+            if name == "hope" or name == "co":
+                print("manual identity from %s to %s" % (name, word))
             if name == word:
                 print("identity relationship from %s to %s" % (name, word))
                 continue
