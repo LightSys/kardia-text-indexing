@@ -8,11 +8,19 @@ import logging
 INDEX_FILE='./index_events'
 
 def get_file_modified_date(filename):
+    """
+    :param filename: filename to be checked
+    :param filename: str
+    :return: time 
+    """
         return os.path.getmtime(filename)
 
-# Reads the `index_events` file to figure out when or if each document has been
-# indexed.
+
 def get_indexing_state():
+    """
+    Reads the `index_events` file to figure out when or if each document has been indexed.
+    :return: result dictionary with the time of indexing or uptated by removing the document entry of a document that was removed
+    """
     result = {}
 
     # Ensure that the file exists
@@ -37,8 +45,13 @@ def get_indexing_state():
     f.close()
     return result
 
-# Appends an event for a document with the current time.
 def append_log(doc_id):
+    """
+    Appends an event for a document with the current time.
+    :param doc_id: document id
+    :type doc_id: int
+    :return: None
+    """
     print('appending log')
     try:
         f = open(INDEX_FILE, 'a')
@@ -47,8 +60,14 @@ def append_log(doc_id):
         logging.warning('Failed to append to the index_events file')
         logging.warning(str(e))
 
-# Append an event for a document, but with a remove event.
+
 def append_log_removal(doc_id):
+    """
+    Append an event for a document, but with a remove event.
+    :param doc_id: document id
+    :type doc_id: int
+    :return: None
+    """
     try:
         f = open(INDEX_FILE, 'a')
         f.write(str(doc_id) + ':removed\n')
@@ -56,8 +75,12 @@ def append_log_removal(doc_id):
         logging.warning('Failed to append to the index_events file')
         logging.warning(str(e))
 
-# Compares the current state of the datbase with the index_events file and the file modification dates of each file.
+
 def synchronize(importer_associations, data_accessor):
+    """
+    Compares the current state of the datbase with the index_events file and the file modification dates of each file.
+    :param importer_associations: 
+    """
     indexed_documents = get_indexing_state()
     documents = data_accessor.get_all_documents()
     for document in documents:
