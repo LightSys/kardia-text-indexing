@@ -8,11 +8,14 @@ import logging
 
 logging.basicConfig(format='%(levelname)s\t%(message)s', level=logging.DEBUG)
 
-data_accessor = data_access.MySQLDataAccessor()
+data_accessor = data_access.MySQLDataAccessor() #contains databse accessing methods
 
 POLLING_DELAY = 10
 
 while True:
+    """
+    Run a loop checking and updating the database indexing state with sync
+    """
     time.sleep(POLLING_DELAY)
     try:
         sync.synchronize([

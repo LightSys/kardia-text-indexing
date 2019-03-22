@@ -175,7 +175,8 @@ use the right python version and library dependencies.
 Inside the activated environment, execute
 
 ```
-pip install -r requirements.txt
+chmod +x setup.sh
+./setup.sh
 ```
 
 to install all the python dependencies. At any point, if you have installed
@@ -189,4 +190,5 @@ used by importers, so make sure they are installed on your system..
 1. libreoffice
 2. imagemagick
 3. pdftotext
-4. tesseract
+4. [tesseract](https://github.com/tesseract-ocr/tesseract)
+5. pulseaudio-libs-devel
