@@ -148,6 +148,13 @@ class MySQLDataAccessor:
             result.append(Relationship(w_id, t_w_id, rel))
         return result
 
+    def get_unique_relationships_from_pending(self):
+        """
+        Get unique relationships from pending relationships.
+        :return:
+        """
+        return set(self.pending_relationships)
+
     def put_word(self, word, relevance):
         self.pending_words.append((word, relevance))
         pass
@@ -208,7 +215,7 @@ class MySQLDataAccessor:
                "select w.e_word_id, tw.e_word_id, %s, now(), %s, now(), %s "
                "from (select e_word_id from e_text_search_word where e_word = %s) as w,"
                 " (select e_word_id from e_text_search_word where e_word = %s) as tw",
-            [(t[2], username, username, t[0], t[1]) for t in set(self.pending_relationships)])  # convert to set to get rid of duplicates
+            [(t[2], username, username, t[0], t[1]) for t in self.get_unique_relationships_from_pending()])  # convert to set to get rid of duplicates
             # map(lambda t: (t[2], username, username, t[0], t[1]), self.pending_relationships))
         self.database.commit()
         self.pending_relationships = []
