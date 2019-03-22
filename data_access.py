@@ -178,7 +178,7 @@ class MySQLDataAccessor:
         :rtype: list of tuples of word_id, target_word_id, and relationship relevance
         """
         cursor = self.database.cursor()
-        cursor.execute('select e_word_id from e_text_search_word where e_word = %s' % word)
+        cursor.execute("select e_word_id from e_text_search_word where e_word = '%s'" % word)
         word_id = cursor.fetchone()
         return self.get_all_relationship_tuples_from_word_id(word_id)
 
