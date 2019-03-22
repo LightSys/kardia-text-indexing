@@ -29,7 +29,9 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
     # print("word %s synset %s relevance %f" % (word, synset, relevance))
     for lemma in synset.lemmas():
         # print("synset %s lemma %s relevance %f" % (synset.name(), lemma.name(), relevance))
-        name = lemma.name()
+        name = str(lemma.name()).lower()
+        if "_" in name:
+            continue
         if name in names:
             pass
             # print("skipping duplicate lemma", name)
@@ -57,7 +59,7 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
                 if str(word) == "hope" or str(word) == "co":
                     print("form word identity from %s to %s" % (name, word))
                 if str(name).strip() == str(word):
-                    print("identity relationship from %s to %s" % (name, word))
+                    print("form identity relationship from %s to %s" % (name, word))
                     continue
                 data_accessor.add_relationship(word, name, relevance - 0.01)
                 names.append(name)
