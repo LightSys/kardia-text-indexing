@@ -15,7 +15,6 @@ def index(document, importer, data_accessor):
     :param importer: importer method for the document filetype
     :param data_accessor: data access object with methods to retrieve data from the database
     :return: None
-    
     """
     text = importer(document.filename)
     lines = tokenizer.tokenize(text)
