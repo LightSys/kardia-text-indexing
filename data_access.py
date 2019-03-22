@@ -257,7 +257,7 @@ class MySQLDataAccessor:
                "from (select e_word_id from e_text_search_word where e_word = %s) as w,"
                 " (select e_word_id from e_text_search_word where e_word = %s) as tw"
                "on duplicate key update e_rel_relevance = least(e_rel_relevance, %s)",  # take the lower relevance to avoid reporting relationships as too relevant
-            [(t[2], username, username, t[0], t[1], float(str(t[2]))) for t in set(self.pending_relationships)])  # convert to set to get rid of duplicates
+            [(t[2], username, username, t[0], t[1], str(t[2])) for t in set(self.pending_relationships)])  # convert to set to get rid of duplicates
             # map(lambda t: (t[2], username, username, t[0], t[1]), self.pending_relationships))
         self.database.commit()
         self.pending_relationships = []
