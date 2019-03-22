@@ -6,10 +6,16 @@ import logging
 from nltk.corpus import stopwords
 import relationships
 
-# This function adds all indexing data for a particular document to the
-# database. It uses the data_access, so this code does not directly touch the
-# database (i.e. database manipulation is abstracted from this function).
 def index(document, importer, data_accessor):
+    """
+    This function adds all indexing data for a particular document to the database. 
+    It uses the data_access, so this code does not directly touch the database 
+    (i.e. database manipulation is abstracted from this function).
+    :param document: document object
+    :param importer: importer method for the document filetype
+    :param data_accessor: data access object with methods to retrieve data from the database
+    :return: None
+    """
     text = importer(document.filename)
     lines = tokenizer.tokenize(text)
 
@@ -44,11 +50,23 @@ def index(document, importer, data_accessor):
     data_accessor.flush()
 
 def remove_document(document_id, data_accessor):
+    """Removes document from the database
+    :param document_id: id of the document to be removed
+    :type document_id: int
+    :param data_accessor: data access object with methods to retrieve data from the database
+    :return: none
+    """
     data_accessor.delete_document_occurrences(document_id)
 
-# Indexes a document, but checks it's filename pattern to make a decision about
-# which importer to use.
+
 def smart_index(document, importer_associations, data_accessor):
+    """
+    Indexes the document using the appropriate importer after checking the filename pattern
+    :param document: document object
+    :param importer_associations: list of tuples matching filetypes to importer functions
+    :param data_accessor: data access object with methods to retrieve data from the database
+    :return: None
+    """
     for (pattern, importer) in importer_associations:
         if fnmatch.fnmatch(document.filename, pattern):
             logging.info('selecting "%s" pattern for <doc %d>' % (pattern, document.id))
