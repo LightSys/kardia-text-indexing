@@ -153,7 +153,7 @@ class MySQLDataAccessor:
         cursor.execute('select e_word_id, e_target_word_id, e_rel_relevance from e_text_search_rel')
         result = []
         for (w_id, t_w_id, rel) in cursor.fetchall():
-            result.append(w_id, t_w_id, rel)
+            result.append((w_id, t_w_id, rel))
         return result
 
     def get_all_relationship_tuples_from_word_id(self, word_id):
