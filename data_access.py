@@ -246,11 +246,11 @@ class MySQLDataAccessor:
         self.database.commit()
         self.pending_occurrences = []
 
-        print("current relationships:", self.get_all_relationship_tuples())
-        print("pending relationships:", self.pending_relationships)
+        # print("current relationships:", self.get_all_relationship_tuples())
+        # print("pending relationships:", self.pending_relationships)
 
         self.database.cursor().executemany(
-               "insert into e_text_search_rel "
+               "insert ignore into e_text_search_rel "  # ignore so that we get warnings instead of errors for duplicate entries
                    "(e_word_id, e_target_word_id, e_rel_relevance, "
                     "s_date_created, s_created_by, s_date_modified, s_modified_by) "
                "select w.e_word_id, tw.e_word_id, %s, now(), %s, now(), %s "
