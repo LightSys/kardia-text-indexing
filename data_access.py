@@ -246,6 +246,9 @@ class MySQLDataAccessor:
         self.database.commit()
         self.pending_occurrences = []
 
+        print("current relationships:", self.get_all_relationship_tuples())
+        print("pending relationships:", self.pending_relationships)
+
         self.database.cursor().executemany(
                "insert into e_text_search_rel "
                    "(e_word_id, e_target_word_id, e_rel_relevance, "
