@@ -149,6 +149,10 @@ class MySQLDataAccessor:
         return result
 
     def get_all_relationship_tuples(self):
+        """
+        :return: a list of tuples for each relationship in the database
+        :rtype: list of tuples of word_id, target_word_id, and relationship relevance
+        """
         cursor = self.database.cursor()
         cursor.execute('select e_word_id, e_target_word_id, e_rel_relevance from e_text_search_rel')
         result = []
@@ -183,15 +187,6 @@ class MySQLDataAccessor:
         if word_id is None:  # if this word is not in the database
             return []  # return an empty list
         return self.get_all_relationship_tuples_from_word_id(word_id)
-
-    def get_unique_relationships_from_pending(self):
-        """
-        Get unique relationships from pending relationships.
-        :return:
-        """
-        unique_rel = [relationship for relationship in set(self.pending_relationships) if relationship not in self.get_all_relationship_tuples()]
-        print(unique_rel)
-        return unique_rel
 
     def put_word(self, word, relevance):
         self.pending_words.append((word, relevance))
@@ -253,8 +248,7 @@ class MySQLDataAccessor:
                "select w.e_word_id, tw.e_word_id, %s, now(), %s, now(), %s "
                "from (select e_word_id from e_text_search_word where e_word = %s) as w,"
                 " (select e_word_id from e_text_search_word where e_word = %s) as tw",
-            [(t[2], username, username, t[0], t[1]) for t in set(self.pending_relationships)])  # convert to set to get rid of duplicates
-            # map(lambda t: (t[2], username, username, t[0], t[1]), self.pending_relationships))
+            [(t[2], username, username, t[0], t[1]) for t in self.pending_relationships])
         self.database.commit()
         self.pending_relationships = []
 
@@ -332,7 +326,7 @@ class RestApiDataAccessor:
         if response.ok:
             return relationship_from_json(json_from_response(response))
         else:
-            logging.error('Failed to create new occurrence')
+            logging.error('Failed to create new relationship')
             logging.error(response.content)
 
     def delete_document_occurrences(self, document_id):

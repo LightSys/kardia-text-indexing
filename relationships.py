@@ -38,14 +38,8 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
             pass
             # print("skipping duplicate lemma", name)
         else:
-            # TODO: figure out why duplicates are being added to database.
-            # For now, this line should fix the symptom until we can eventually figure out the cause
-            if name.strip() == word:
-                print("identity relationship from %s to %s" % (word, name))
-                continue
             for relationship in data_accessor.get_all_relationship_tuples_from_word(word):
                 if name == relationship[1]:
-                    print("found duplicate in database from %s to %s" % (word, name))
                     break
             else:  # no duplicate relationship found; this is a unique relationship
                 data_accessor.add_relationship(word, name, relevance)
@@ -57,20 +51,23 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
                 pass
                 # print("skipping duplicate form", name)
             else:
-                if name.strip() == word:
-                    print("form identity relationship from %s to %s" % (word, name))
-                    continue
                 for relationship in data_accessor.get_all_relationship_tuples_from_word(word):
                     if name == relationship[1]:
-                        print("found duplicate in database from %s to %s" % (word, name))
                         break
                 else:  # no duplicate relationship found; this is a unique relationship
                     data_accessor.add_relationship(word, name, relevance - 0.01)
                     names.append(name)
 
 def add_relationships(word, data_accessor, threshold = 0.5):
-    if word in data_accessor.get_all_words():
-        return  # we already indexed this word, don't get all the relationships again
+    """
+    Given a word, find all words that are related and add the corresponding relationships to the database.
+    :param word: the word the relationships are from
+    :type word: str
+    :param data_accessor: data accessor
+    :param threshold: if the relevance of a relationship is lower than this number, don't add the relationship to the database.
+    :type threshold: float
+    :return:
+    """
     synsets = wordnet.synsets(word)  # get the collection of WordNet Synset objects. A Synset is a collection of lemmas with similar meanings.
     added_synsets = set(synsets)
     hypernym_fun = lambda s: s.hypernyms()
