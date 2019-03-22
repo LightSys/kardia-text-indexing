@@ -168,7 +168,7 @@ class MySQLDataAccessor:
                        'where e_word_id = %d' % word_id)
         result = []
         for (w_id, t_w_id, rel) in cursor.fetchall():
-            result.append(w_id, t_w_id, rel)
+            result.append((w_id, t_w_id, rel))
         return result
 
     def get_all_relationship_tuples_from_word(self, word):
