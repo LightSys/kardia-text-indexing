@@ -291,7 +291,7 @@ class MySQLDataAccessor:
         """
         Add a relationship
         :param word: word
-        :param target_word: a word that 'word' is related t
+        :param target_word: a word that 'word' is related to
         :param relevance: the relevance of the relationship
         :return: None
         """
