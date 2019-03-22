@@ -27,7 +27,6 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
     :return:
     """
     print("word %s synset %s relevance %f" % (word, synset, relevance))
-    print("names", names)
     for lemma in synset.lemmas():
         # print("synset %s lemma %s relevance %f" % (synset.name(), lemma.name(), relevance))
         name = lemma.name()
