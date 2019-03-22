@@ -29,14 +29,8 @@ def importer(filename, type):
         # Process image
         img = cv2.imread(outfile, 0)
         text = pytesseract.image_to_string(Image.fromarray(img))
-        lines = text.split('\n')
 
-        contents = []
-        for line in lines:
-            if line != '':
-                contents.append(line.split())
-
-    return contents;
+    return text;
 
 if __name__ == '__main__':
     '''
