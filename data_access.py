@@ -148,12 +148,20 @@ class MySQLDataAccessor:
             result.append(Relationship(w_id, t_w_id, rel))
         return result
 
+    def get_all_relationship_tuples(self):
+        cursor = self.database.cursor()
+        cursor.execute('select e_word_id, e_target_word_id, e_rel_relevance from e_text_search_rel')
+        result = []
+        for (w_id, t_w_id, rel) in cursor.fetchall():
+            result.append(w_id, t_w_id, rel)
+        return result
+
     def get_unique_relationships_from_pending(self):
         """
         Get unique relationships from pending relationships.
         :return:
         """
-        return [relationship for relationship in set(self.pending_relationships) if relationship not in self.get_all_relationships()]
+        return [relationship for relationship in set(self.pending_relationships) if relationship not in self.get_all_relationship_tuples()]
 
     def put_word(self, word, relevance):
         self.pending_words.append((word, relevance))
