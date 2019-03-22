@@ -133,7 +133,7 @@ def json_from_response(response):
     """
     Decode json
     :param response: a json response
-    :return: # TODO: what is this?
+    :return: a python object of the response
     """
     return json.loads(response.content.decode('utf8'))
 
@@ -163,7 +163,7 @@ def get_all_resource(resource_name, resource_maker):
     :type resource_name: str
     :param resource_maker: the function to convert the json to the appropriate object (e.g., word_from_json makes a Word object)
     :type resource_maker: function
-    :return: the given resource. Note: this is a yield, not a return. TODO: what is difference between yield and return?
+    :return: the given resource. Note: this is a yield, not a return. The function is not terminated and the local variables are preserved. The function can resume after the yield.
     :rtype: a resource. As implemented this could be one of Document, Occurrence, Word, or Relationship
     """
     response = requests.get(
@@ -283,32 +283,45 @@ class MySQLDataAccessor:
         :param sequence: TODO: what is this
         :param is_eol: indicates whether the occurrence is at the end of the line
         :type is_eol: bool
-        :return:
+        :return: None
         """
         self.pending_occurrences.append((word_text, document.id, sequence, is_eol))
 
     def add_relationship(self, word, target_word, relevance):
         """
         Add a relationship
-        :param word:
-        :param target_word:
-        :param relevance:
-        :return:
+        :param word: word
+        :param target_word: a word that 'word' is related t
+        :param relevance: the relevance of the relationship
+        :return: None
         """
         self.pending_relationships.append((word, target_word, relevance))
 
     # Use document_id because we may not have the document
     def delete_document_occurrences(self, document_id):
+        """
+        Remove document from the database
+        :param document_id: ID of the document to be removed
+        :return: None
+        """
         self.database.cursor().execute('delete from e_text_search_occur where e_document_id = %s', (document_id,))
         self.database.commit()
 
     def delete_all_index_data(self):
+        """
+        Deletes all index data from the database
+        :return: None
+        """
         self.database.cursor().execute('delete from e_text_search_occur')
         self.database.cursor().execute('delete from e_text_search_rel')
         self.database.cursor().execute('delete from e_text_search_word')
         self.database.commit()
 
     def flush(self):
+        """
+        Pushes all database changes from other functions to database
+        :return: None
+        """
         (username, _) = get_auth()
         cursor = self.database.cursor()
         cursor.execute('select max(e_word_id) from e_text_search_word')
