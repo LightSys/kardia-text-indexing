@@ -48,6 +48,9 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
                 pass
                 # print("skipping duplicate form", name)
             else:
+                if name == word:
+                    print("identity relationship form from %s to %s" % (name, word))
+                    continue
                 data_accessor.add_relationship(word, name, relevance - 0.01)
                 names.append(name)
 
