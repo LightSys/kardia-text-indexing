@@ -59,13 +59,13 @@ def add_relationships(word, data_accessor, threshold = 0.5):
         return  # we already indexed this word, don't get all the relationships again
     synsets = wordnet.synsets(word)
     added_synsets = set(synsets)
-    hypernym_fun = lambda s: s.hypernyms()
-    hyponym_fun = lambda s: s.hyponyms()
-    part_meronym_fun = lambda s: s.part_meronyms()
-    substance_meronym_fun = lambda s: s.substance_meronyms()
-    part_holonym_fun = lambda s: s.part_holonyms()
-    substance_holonym_fun = lambda s: s.substance_holonyms()
-    entailment_fun = lambda s: s.entailments()
+    hypernym_fun = lambda s: s.hypernyms
+    hyponym_fun = lambda s: s.hyponyms
+    part_meronym_fun = lambda s: s.part_meronyms
+    substance_meronym_fun = lambda s: s.substance_meronyms
+    part_holonym_fun = lambda s: s.part_holonyms
+    substance_holonym_fun = lambda s: s.substance_holonyms
+    entailment_fun = lambda s: s.entailments
     relationship_funs = [hypernym_fun, hyponym_fun, part_meronym_fun, substance_meronym_fun,
                          part_holonym_fun, substance_holonym_fun, entailment_fun]
     # a list of the words that we have already added relationships for. This list will be modified
