@@ -28,34 +28,29 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
     :type names: list of strings
     :return:
     """
-    # print("word %s synset %s relevance %f" % (word, synset, relevance))
     for lemma in synset.lemmas():
-        # print("synset %s lemma %s relevance %f" % (synset.name(), lemma.name(), relevance))
         name = lemma.name().lower()
-        if "_" in name:
+        if "_" in name or "-" in name:  # some lemmas have _ or - in their names, but words in our database never do, so those relationships are useful
             continue
-        if name in names:
+        if name in names:  # we already added a relationship from this word
             pass
-            # print("skipping duplicate lemma", name)
         else:
             for relationship in data_accessor.get_all_relationship_tuples_from_word(word):
-                if name == relationship[1]:
+                if name == relationship[1]:  # we already have a relationship like this in the database
                     break
             else:  # no duplicate relationship found; this is a unique relationship
                 data_accessor.add_relationship(word, name, relevance)
                 names.append(name)
         for form in lemma.derivationally_related_forms():
-            # print("synset %s lemma %s related form %s" % (synset.name(), lemma.name(), form.name()))
             name = form.name().lower()
-            if name in names:
+            if name in names:  # we already added a relationship from this word
                 pass
-                # print("skipping duplicate form", name)
             else:
                 for relationship in data_accessor.get_all_relationship_tuples_from_word(word):
-                    if name == relationship[1]:
+                    if name == relationship[1]:  # we already have a relationship like this in the database
                         break
                 else:  # no duplicate relationship found; this is a unique relationship
-                    data_accessor.add_relationship(word, name, relevance - 0.01)
+                    data_accessor.add_relationship(word, name, relevance)
                     names.append(name)
 
 def add_relationships(word, data_accessor, threshold = 0.5):
@@ -82,13 +77,13 @@ def add_relationships(word, data_accessor, threshold = 0.5):
     # a list of the words that we have already added relationships to. This list will be modified
     names = [word]  # because we don't want to add a relationship from word to word
     for syn in synsets:
-        add_relationships_synset(word, syn, 0.99, data_accessor, names)  # add synonym
+        add_relationships_synset(word, syn, 0.8, data_accessor, names)  # add synonym. synonyms have a relevance of 0.8 (chosen because we want a relevance closer to but less than 1)
         for relationship in relationship_funs:
             for related_syn in relationship(syn):
-                if related_syn in added_synsets:
+                if related_syn in added_synsets:  # we already analyzed this synonym
                     continue
                 relevance = related_syn.path_similarity(syn)
-                if relevance < threshold:
+                if relevance < threshold:  # the synonym is too different to be relevant
                     continue
                 added_synsets.add(related_syn)
                 add_relationships_synset(word, related_syn, relevance, data_accessor, names)  # add related words
