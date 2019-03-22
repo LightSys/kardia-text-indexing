@@ -387,12 +387,12 @@ class RestApiDataAccessor:
 
     def create_resource(self, resource_name, data):
         """
-        Create an entry into the database with date and user
+        Create a database record in given table
         :param resource_name: database table name
-        :type resource: str
+        :type resource_name: str
         :param data: column and value names of the table
-        :type data:dict
-        :return: JSON post with resource name and  dictionary
+        :type data: dict
+        :return: the server reply from POST, either success or fail message
         """
         current_date = get_current_date()
         user = os.environ.get('USER', 'devel')
