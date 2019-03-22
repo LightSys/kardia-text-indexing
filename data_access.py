@@ -246,9 +246,6 @@ class MySQLDataAccessor:
         self.database.commit()
         self.pending_occurrences = []
 
-        # print("current relationships:", self.get_all_relationship_tuples())
-        # print("pending relationships:", self.pending_relationships)
-
         self.database.cursor().executemany(
                "insert into e_text_search_rel "  # ignore so that we get warnings instead of errors for duplicate entries
                    "(e_word_id, e_target_word_id, e_rel_relevance, "
@@ -256,7 +253,7 @@ class MySQLDataAccessor:
                "select w.e_word_id, tw.e_word_id, %s, now(), %s, now(), %s "
                "from (select e_word_id from e_text_search_word where e_word = %s) as w,"
                 " (select e_word_id from e_text_search_word where e_word = %s) as tw"
-               "on duplicate key update e_rel_relevance = least(e_rel_relevance, cast(%s as decimal))",  # take the lower relevance to avoid reporting relationships as too relevant
+               " on duplicate key update e_rel_relevance = least(e_rel_relevance, cast(%s as decimal))",  # take the lower relevance to avoid reporting relationships as too relevant
             [(t[2], username, username, t[0], t[1], str(t[2])) for t in set(self.pending_relationships)])  # convert to set to get rid of duplicates
             # map(lambda t: (t[2], username, username, t[0], t[1]), self.pending_relationships))
         self.database.commit()

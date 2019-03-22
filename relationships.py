@@ -1,4 +1,6 @@
 """
+Get word relationships.
+Written by Catherine DeJager, for LightSys Code-a-Thon 2019
 Relationships (in order of highest relevance factor to lowest relevance factor)
 1. derivationally related forms (lemma.derivationally_related_forms())
 2. synonyms
