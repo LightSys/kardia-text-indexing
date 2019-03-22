@@ -206,6 +206,9 @@ def get_all_occurrences():
     """
     return get_all_resource('e_text_search_occur', occurrence_from_json)
 
+def get_all_relationships():
+    return get_all_resource('e_text_search_rel', relationship_from_json)
+
 class MySQLDataAccessor:
     """
     Interface for Kardia database using MySQL
@@ -261,6 +264,54 @@ class MySQLDataAccessor:
                 is_eol = True
             result.append(Occurrence(w_id, d_id, seq, None, is_eol))
         return result
+
+    def get_all_relationships(self):
+        cursor = self.database.cursor()
+        cursor.execute('select e_word_id, e_target_word_id, e_rel_relevance from e_text_search_rel')
+        result = []
+        for (w_id, t_w_id, rel) in cursor.fetchall():
+            result.append(Relationship(w_id, t_w_id, rel))
+        return result
+
+    def get_all_relationship_tuples(self):
+        """
+        :return: a list of tuples for each relationship in the database
+        :rtype: list of tuples of word_id, target_word_id, and relationship relevance
+        """
+        cursor = self.database.cursor()
+        cursor.execute('select e_word_id, e_target_word_id, e_rel_relevance from e_text_search_rel')
+        result = []
+        for (w_id, t_w_id, rel) in cursor.fetchall():
+            result.append((w_id, t_w_id, rel))
+        return result
+
+    def get_all_relationship_tuples_from_word_id(self, word_id):
+        """
+        :param word_id: id of the word the relationship is from
+        :type word_id: int
+        :return: a list of tuples for each relationship from the word specified by word id
+        :rtype: list of tuples of word_id, target_word_id, and relationship relevance
+        """
+        cursor = self.database.cursor()
+        cursor.execute('select e_word_id, e_target_word_id, e_rel_relevance from e_text_search_rel '
+                       'where e_word_id = %d' % word_id)
+        result = []
+        for (w_id, t_w_id, rel) in cursor.fetchall():
+            result.append((w_id, t_w_id, rel))
+        return result
+
+    def get_all_relationship_tuples_from_word(self, word):
+        """
+        :param word: the word the relationship is from
+        :return: a list of tuples for each relationship from word
+        :rtype: list of tuples of word_id, target_word_id, and relationship relevance
+        """
+        cursor = self.database.cursor()
+        cursor.execute("select e_word_id from e_text_search_word where e_word = '%s'" % word)
+        word_id = cursor.fetchone()
+        if word_id is None:  # if this word is not in the database
+            return []  # return an empty list
+        return self.get_all_relationship_tuples_from_word_id(word_id)
 
     def put_word(self, word, relevance):
         """
@@ -349,13 +400,13 @@ class MySQLDataAccessor:
         self.pending_occurrences = []
 
         self.database.cursor().executemany(
-               "insert into e_text_search_rel "
+               "insert ignore into e_text_search_rel "  # ignore so that we get warnings instead of errors for duplicate entries
                    "(e_word_id, e_target_word_id, e_rel_relevance, "
                     "s_date_created, s_created_by, s_date_modified, s_modified_by) "
                "select w.e_word_id, tw.e_word_id, %s, now(), %s, now(), %s "
                "from (select e_word_id from e_text_search_word where e_word = %s) as w,"
                 " (select e_word_id from e_text_search_word where e_word = %s) as tw",
-            map(lambda t: (t[2], username, username, t[0], t[1]), self.pending_relationships))
+            [(t[2], username, username, t[0], t[1]) for t in self.pending_relationships])
         self.database.commit()
         self.pending_relationships = []
 
@@ -476,7 +527,7 @@ class RestApiDataAccessor:
         if response.ok:
             return relationship_from_json(json_from_response(response))
         else:
-            logging.error('Failed to create new occurrence')
+            logging.error('Failed to create new relationship')
             logging.error(response.content)
 
     def delete_document_occurrences(self, document_id):
