@@ -13,7 +13,7 @@ def get_file_modified_date(filename):
     :param filename: str
     :return: time 
     """
-        return os.path.getmtime(filename)
+    return os.path.getmtime(filename)
 
 
 def get_indexing_state():

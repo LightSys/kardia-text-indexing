@@ -116,15 +116,8 @@ file's contents.
 
 So, calling the text importer may look like this: `importer('myFileName.txt')`
 
-Any new importer added must have an `importer` function. Importers usually
-utilize the `subprocess` function of python to convert files to plain text. An
-outside program is called using `subprocess.call()` that converts whatever file
-type you are given to plain text, which is then stored in a temporary file.
-
-For example, `pdftotext` is used to convert text-based pdf files to plain text.
-So, `pdftotext` is called using the filename passed to the importer, then it
-outputs to a temp file. Then, python can read in the temp file and turn it into
-a string.
+Any new importer added must have an `importer` function. Importers use a variety of methods
+to extract text, but the [textract library](https://textract.readthedocs.io/en/latest/index.html) can be used to easy support more file types.
 
 ---
 
@@ -138,25 +131,18 @@ directory and all of its contents are removed from the system.
 
 We did not put much effort into the following intended features of this tool.
 
-1. *Tokenizing*. While we made a basic tokenizer, it is still very rough. We
-   used NLTK, but did not do too much to make sure that the output tokens were
-   really good.
-2. *Heuristics to avoid indexing stopwords*. Words like 'the', 'an', and 'a'
-   are so common that they really should not be indexed because it would not be
-   very helpful. We did not use any techniques to avoid such words.
-3. *Tuning Tesseract OCR*. The library works for some images, but for some
-   clear images it does not work. We didn't figure out a good way to pull text
-   from images. We did however, figure out how to pull images from pdfs, so the
-   only issue is with the OCR.
-4. *Relevance of words*. The words in the database have a
-   relevance field, but we just inserted 1.0 as the value. This relevance value
-   should be investigated.
-5. *Relationships between words*. We have not yet inserted any relationships
-   between words, nor have we considered how to determine the relevance of a
-   relationship.
-6. *Thorough unit testing*. Sorry guys, you get to have fun with this. We did
-   do a tiny bit, but a lot of the parts of this system are difficult to write
-   unit tests for (although it still would be good to have them).
+1. *Tuning Tesseract OCR*. OCR requires very specific enviornments for preforming
+    its operations, usually through image pre-processing. Some pre-processing is in place
+    but it could be expanded.
+2. *Relevance of words*. The words in the database have a
+   relevance field. Stop words have a relevance of 0.2 and other words are set to 1.0.
+   Further development is reccomended.
+3. *Relationships between words*. The basic structure for relationship finding is in place,
+    but integration with relevance is reccomended, especially when duplicate relationships are
+    found.
+4. *Thorough unit testing*. Some unit testing is in place, but could be more thorough. 
+5. *More importers*. A good number of file types are supported, but more cannot hurt.
+6. *Image PDF Support*. Image-based PDFs are currently read by the OCR, but typically do not        generate good results, if any results.
 
 ## Project infrastructure
 
@@ -172,6 +158,14 @@ virtualenv .
 After that command, you can execute `source bin/activate` to setup the shell to
 use the right python version and library dependencies.
 
+
+Install the following system packages:
+1. imagemagick
+2. [textract dependencies](https://textract.readthedocs.io/en/latest/installation.html)
+3. pulseaudio
+4. [tesseract](https://github.com/tesseract-ocr/tesseract)
+5. GhostScript (We think this is required, but we didn't have a chance to test)
+
 Inside the activated environment, execute
 
 ```
@@ -179,16 +173,9 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-to install all the python dependencies. At any point, if you have installed
+At any point, if you have installed
 extra dependencies, execute `pip freeze` to see the currently installed
 packages. To persist these as dependencies, execute `pip freeze >
 requirements.txt`.
 
-In addition to the python directories, the following command line programs were
-used by importers, so make sure they are installed on your system..
-
-1. libreoffice
-2. imagemagick
-3. pdftotext
-4. [tesseract](https://github.com/tesseract-ocr/tesseract)
-5. pulseaudio-libs-devel
+Update `config.tesseract_path` in config.py.

@@ -10,7 +10,9 @@ from PIL import Image
 import os
 import sys
 import tempfile
+import config
 
+pytesseract.pytesseract.tesseract_cmd = config.tesseract_path
 
 def importer(filename, type):
     dir_name = os.path.dirname(__file__)
