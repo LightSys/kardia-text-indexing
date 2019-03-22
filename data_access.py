@@ -380,9 +380,20 @@ class RestApiDataAccessor:
         self.all_occurrences[occurrence.document_id].append(occurrence.res_id)
 
     def get_all_documents(self):
+        """
+        :return: all documents in the database
+        """
         return list(get_all_documents())
 
     def create_resource(self, resource_name, data):
+        """
+        Create an entry into the database with date and user
+        :param resource_name: database table name
+        :type resource: str
+        :param data: column and value names of the table
+        :type data:dict
+        :return: JSON post with resource name and  dictionary
+        """
         current_date = get_current_date()
         user = os.environ.get('USER', 'devel')
         data['s_date_modified'] = current_date
@@ -400,6 +411,14 @@ class RestApiDataAccessor:
             auth=get_auth())
 
     def put_word(self, word, relevance):
+        """
+        Add a word into the database. (Note: this adds to pending words. You must call flush to actually add the word.)
+        :param word: the word to add
+        :type word: str
+        :param relevance: a measure of how useful the word is in a search (e.g. "email" is more relevant than "and").
+        :type relevance: float
+        :return: None
+        """        
         if word not in self.all_words:
             response = self.create_resource('e_text_search_word', 
                     {'e_word': word, 'e_word_relevance': relevance})
@@ -412,6 +431,19 @@ class RestApiDataAccessor:
                 logging.error(response.content)
 
     def add_occurrence(self, word_text, document_id, sequence, is_eol):
+         """
+        Add an occurrence into the database. (Note: this adds the occurrence to pending_occurrences. You must call flush to actually add the occurrence.)
+        :param word_text: text of the word
+        :type word_text: str
+        :param document_id: the document_id of the document the word occurs in
+        :type document_id: int
+        :param sequence: TODO: what is this
+        :param is_eol: indicates whether the occurrence is at the end of the line
+        :type is_eol: bool
+        :return: an occurrence object of the word
+        :rtype: Occurrence
+        """
+
         word_id = self.all_words[word_text].id
         eol = 0
         if is_eol:
@@ -421,13 +453,24 @@ class RestApiDataAccessor:
         if response.ok:
             occurrence = occurrence_from_json(json_from_response(response))
             self.all_occurrences[occurrence.document_id].append(occurrence)
-            logging.info('Added_occurence %s' % word_text)
+            logging.info('Added_occurrence %s' % word_text)
             return occurrence
         else:
             logging.error('Failed to create new occurrence')
             logging.error(response.content)
 
     def add_relationship(self, word, target_word, relevance):
+        """
+        Add a relationship
+        :param word: word
+        :type word: str
+        :param target_word: the other word related to word
+        :type target_word: str
+        :param relevance: the relevance of the relationship between the words. A higher number indicates a stronger relationship
+        :type relevance: float
+        :return: a relationship object of the relationship between word and target_word
+        :rtype: Relationship
+        """
         response = self.create_resource('e_text_search_rel',
             {'e_word_id': word_id, 'e_target_word_id': target_word_id, 'e_rel_relevance': relevance})
         if response.ok:
@@ -437,6 +480,10 @@ class RestApiDataAccessor:
             logging.error(response.content)
 
     def delete_document_occurrences(self, document_id):
+        """Delete occurrences of the document from the database
+        :param document_id: id of the document since the document may have been removed
+        :return: None
+        """
         for res_id in self.all_occurrences[document_id]:
             self.session.delete(SERVER_PREFIX + res_id)
         del self.all_occurrences[document_id]
