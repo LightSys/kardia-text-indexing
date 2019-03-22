@@ -6,9 +6,14 @@
 # 2. Tokenize the words from the array of strings
 
 from nltk.tokenize import RegexpTokenizer
-from nltk.corpus import stopwords
+import string
 
 def tokenize(imported_string):
+    """Tokenize a string using nltk RegxpTokenizer
+    :param imported_string: string imported by a document importer
+    :type imported_string: str
+    :return: a 2d array of the each line in the document and every word in each line
+    """
     imported_string = imported_string.translate(str.maketrans("’", "'"))
     imported_string = imported_string.lower()
     string_array = imported_string.split("\n")
