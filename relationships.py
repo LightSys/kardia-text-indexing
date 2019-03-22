@@ -9,7 +9,6 @@ Relationships (in order of highest relevance factor to lowest relevance factor)
 5. meronym (part)
 6. holonym (whole)
 7. entailment (implication)
-8. corpus.similar (appear in similar contexts)
 """
 from nltk.corpus import wordnet
 
