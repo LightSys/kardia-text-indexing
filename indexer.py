@@ -32,11 +32,11 @@ def index(document, importer, data_accessor):
         # the word is at the end of the line.
             if line_index == last_line_index:
                 is_end_of_line = True
-            # add the relationships before the word because of the line in add_relationships that checks if word in data_accessor.get_all_words()
-            relationships.add_relationships(word, data_accessor)
             if word in stop_words:
                 data_accessor.put_word(word, 0.2)
             else:
+                # add the relationships before the word because of the line in add_relationships that checks if word in data_accessor.get_all_words()
+                relationships.add_relationships(word, data_accessor)
                 data_accessor.put_word(word, 1.0)
             data_accessor.add_occurrence(word, document, total_index, is_end_of_line)
             total_index += 1
