@@ -147,6 +147,9 @@ class MySQLDataAccessor:
 
     def add_relationship(self, word, target_word, relevance):
         # print("relationship from %s to %s with relevance %f" % (word, target_word, relevance))
+        if word == target_word:
+            print("Tried to add identity relationship from %s to %s" % (word, target_word))
+            return
         self.pending_relationships.append((word, target_word, relevance))
 
     # Use document_id because we may not have the document
