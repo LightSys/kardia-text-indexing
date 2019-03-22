@@ -156,6 +156,32 @@ class MySQLDataAccessor:
             result.append(w_id, t_w_id, rel)
         return result
 
+    def get_all_relationship_tuples_from_word_id(self, word_id):
+        """
+        :param word_id: id of the word the relationship is from
+        :type word_id: int
+        :return: a list of tuples for each relationship from the word specified by word id
+        :rtype: list of tuples of word_id, target_word_id, and relationship relevance
+        """
+        cursor = self.database.cursor()
+        cursor.execute('select e_word_id, e_target_word_id, e_rel_relevance from e_text_search_rel '
+                       'where e_word_id = %d' % word_id)
+        result = []
+        for (w_id, t_w_id, rel) in cursor.fetchall():
+            result.append(w_id, t_w_id, rel)
+        return result
+
+    def get_all_relationship_tuples_from_word(self, word):
+        """
+        :param word: the word the relationship is from
+        :return: a list of tuples for each relationship from word
+        :rtype: list of tuples of word_id, target_word_id, and relationship relevance
+        """
+        cursor = self.database.cursor()
+        cursor.execute('select e_word_id from e_text_search_word where e_word = %s' % word)
+        word_id = cursor.fetchone()
+        return self.get_all_relationship_tuples_from_word_id(word_id)
+
     def get_unique_relationships_from_pending(self):
         """
         Get unique relationships from pending relationships.

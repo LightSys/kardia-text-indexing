@@ -29,7 +29,7 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
     # print("word %s synset %s relevance %f" % (word, synset, relevance))
     for lemma in synset.lemmas():
         # print("synset %s lemma %s relevance %f" % (synset.name(), lemma.name(), relevance))
-        name = str(lemma.name()).lower()
+        name = lemma.name().lower()
         if "_" in name:
             continue
         if name in names:
@@ -38,31 +38,33 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
         else:
             # TODO: figure out why duplicates are being added to database.
             # For now, this line should fix the symptom until we can eventually figure out the cause
-            if str(name) == "hope" or str(name) == "co":
-                print("name identity from %s to %s" % (name, word))
-            if str(word) == "hope" or str(word) == "co":
-                print("word identity from %s to %s" % (name, word))
-            if str(name).strip() == str(word):
-                print("identity relationship from %s to %s" % (name, word))
+            if name.strip() == word:
+                print("identity relationship from %s to %s" % (word, name))
                 continue
-            data_accessor.add_relationship(word, name, relevance)
-            names.append(name)
+            for relationship in data_accessor.get_all_relationship_tuples_from_word(word):
+                if name == relationship[1]:
+                    print("found duplicate in database from %s to %s" % (word, name))
+                    break
+            else:  # no duplicate relationship found; this is a unique relationship
+                data_accessor.add_relationship(word, name, relevance)
+                names.append(name)
         for form in lemma.derivationally_related_forms():
             # print("synset %s lemma %s related form %s" % (synset.name(), lemma.name(), form.name()))
-            name = form.name()
+            name = form.name().lower()
             if name in names:
                 pass
                 # print("skipping duplicate form", name)
             else:
-                if str(name) == "hope" or str(name) == "co":
-                    print("form name identity from %s to %s" % (name, word))
-                if str(word) == "hope" or str(word) == "co":
-                    print("form word identity from %s to %s" % (name, word))
-                if str(name).strip() == str(word):
-                    print("form identity relationship from %s to %s" % (name, word))
+                if name.strip() == word:
+                    print("form identity relationship from %s to %s" % (word, name))
                     continue
-                data_accessor.add_relationship(word, name, relevance - 0.01)
-                names.append(name)
+                for relationship in data_accessor.get_all_relationship_tuples_from_word(word):
+                    if name == relationship[1]:
+                        print("found duplicate in database from %s to %s" % (word, name))
+                        break
+                else:  # no duplicate relationship found; this is a unique relationship
+                    data_accessor.add_relationship(word, name, relevance - 0.01)
+                    names.append(name)
 
 def add_relationships(word, data_accessor, threshold = 0.5):
     if word in data_accessor.get_all_words():
