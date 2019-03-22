@@ -78,7 +78,8 @@ def append_log_removal(doc_id):
 
 def synchronize(importer_associations, data_accessor):
     """
-    Compares the current state of the datbase with the index_events file and the file modification dates of each file. Re-indexes files modified since last index
+    Compares the current state of the datbase with the index_events file 
+    and the file modification dates of each file. Re-indexes files modified since last index
     :param importer_associations: list of tuples matching filetypes to importer functions
     :param data_accessor: data access object containing methods to retrieve data from the database
     :return: None
