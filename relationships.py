@@ -87,7 +87,6 @@ def add_relationships(word, data_accessor, threshold = 0.5):
         for relationship in relationship_funs:
             for related_syn in relationship(syn):
                 if related_syn in added_synsets:
-                    print("skipping duplicate syn", related_syn)
                     continue
                 relevance = related_syn.path_similarity(syn)
                 if relevance < threshold:
