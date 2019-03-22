@@ -26,7 +26,7 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
     :type names: list of strings
     :return:
     """
-    print("word %s synset %s relevance %f" % (word, synset, relevance))
+    # print("word %s synset %s relevance %f" % (word, synset, relevance))
     for lemma in synset.lemmas():
         # print("synset %s lemma %s relevance %f" % (synset.name(), lemma.name(), relevance))
         name = lemma.name()
@@ -36,6 +36,7 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
         else:
             # TODO: figure out why duplicates are being added to database.
             # For now, this line should fix the symptom until we can eventually figure out the cause
+            print("name %s type %s word %s" % (name, type(name), word))
             if name == word:
                 print("identity relationship from %s to %s" % (name, word))
                 continue
@@ -57,7 +58,7 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
 def add_relationships(word, data_accessor, threshold = 0.5):
     if word in data_accessor.get_all_words():
         return  # we already indexed this word, don't get all the relationships again
-    synsets = wordnet.synsets(word)
+    synsets = wordnet.synsets(word)  # get the collection of WordNet Synset objects. A Synset is a collection of lemmas with similar meanings.
     added_synsets = set(synsets)
     hypernym_fun = lambda s: s.hypernyms()
     hyponym_fun = lambda s: s.hyponyms()
@@ -68,7 +69,7 @@ def add_relationships(word, data_accessor, threshold = 0.5):
     entailment_fun = lambda s: s.entailments()
     relationship_funs = [hypernym_fun, hyponym_fun, part_meronym_fun, substance_meronym_fun,
                          part_holonym_fun, substance_holonym_fun, entailment_fun]
-    # a list of the words that we have already added relationships for. This list will be modified
+    # a list of the words that we have already added relationships to. This list will be modified
     names = [word]  # because we don't want to add a relationship from word to word
     for syn in synsets:
         add_relationships_synset(word, syn, 0.99, data_accessor, names)
