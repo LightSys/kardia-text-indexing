@@ -36,9 +36,11 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
         else:
             # TODO: figure out why duplicates are being added to database.
             # For now, this line should fix the symptom until we can eventually figure out the cause
-            if name == "hope" or name == "co":
-                print("manual identity from %s to %s" % (name, word))
-            if name == word:
+            if str(name) == "hope" or str(name) == "co":
+                print("name identity from %s to %s" % (name, word))
+            if str(word) == "hope" or str(word) == "co":
+                print("word identity from %s to %s" % (name, word))
+            if str(name).strip() == str(word):
                 print("identity relationship from %s to %s" % (name, word))
                 continue
             data_accessor.add_relationship(word, name, relevance)
@@ -50,8 +52,12 @@ def add_relationships_synset(word, synset, relevance, data_accessor, names):
                 pass
                 # print("skipping duplicate form", name)
             else:
-                if name == word:
-                    print("identity relationship form from %s to %s" % (name, word))
+                if str(name) == "hope" or str(name) == "co":
+                    print("form name identity from %s to %s" % (name, word))
+                if str(word) == "hope" or str(word) == "co":
+                    print("form word identity from %s to %s" % (name, word))
+                if str(name).strip() == str(word):
+                    print("identity relationship from %s to %s" % (name, word))
                     continue
                 data_accessor.add_relationship(word, name, relevance - 0.01)
                 names.append(name)
