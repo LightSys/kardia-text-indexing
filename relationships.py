@@ -72,14 +72,14 @@ def add_relationships(word, data_accessor, threshold = 0.5):
     # a list of the words that we have already added relationships to. This list will be modified
     names = [word]  # because we don't want to add a relationship from word to word
     for syn in synsets:
-        add_relationships_synset(word, syn, 0.99, data_accessor, names)
+        add_relationships_synset(word, syn, 0.99, data_accessor, names)  # add synonym
         for relationship in relationship_funs:
             for related_syn in relationship(syn):
                 if related_syn in added_synsets:
-                    # print("skipping duplicate syn", related_syn)
+                    print("skipping duplicate syn", related_syn)
                     continue
                 relevance = related_syn.path_similarity(syn)
                 if relevance < threshold:
                     continue
                 added_synsets.add(related_syn)
-                add_relationships_synset(word, related_syn, relevance, data_accessor, names)
+                add_relationships_synset(word, related_syn, relevance, data_accessor, names)  # add related words
