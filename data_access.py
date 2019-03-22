@@ -267,6 +267,8 @@ class RestApiDataAccessor:
             logging.error(response.content)
 
     def add_relationship(self, word, target_word, relevance):
+        word_id = self.all_words[word].id
+        target_word_id = self.all_words[target_word].id
         response = self.create_resource('e_text_search_rel',
             {'e_word_id': word_id, 'e_target_word_id': target_word_id, 'e_rel_relevance': relevance})
         if response.ok:
