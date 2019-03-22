@@ -161,7 +161,9 @@ class MySQLDataAccessor:
         Get unique relationships from pending relationships.
         :return:
         """
-        return [relationship for relationship in set(self.pending_relationships) if relationship not in self.get_all_relationship_tuples()]
+        unique_rel = [relationship for relationship in set(self.pending_relationships) if relationship not in self.get_all_relationship_tuples()]
+        print(unique_rel)
+        return unique_rel
 
     def put_word(self, word, relevance):
         self.pending_words.append((word, relevance))
