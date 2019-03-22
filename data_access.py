@@ -252,7 +252,7 @@ class MySQLDataAccessor:
                     "s_date_created, s_created_by, s_date_modified, s_modified_by) "
                "select w.e_word_id, tw.e_word_id, %s, now(), %s, now(), %s "
                "from (select e_word_id from e_text_search_word where e_word = %s) as w,"
-                " (select e_word_id from e_text_search_word where e_word = %s) as tw)",
+                " (select e_word_id from e_text_search_word where e_word = %s) as tw",
             [(t[2], username, username, t[0], t[1]) for t in set(self.pending_relationships)])  # convert to set to get rid of duplicates
             # map(lambda t: (t[2], username, username, t[0], t[1]), self.pending_relationships))
         self.database.commit()
