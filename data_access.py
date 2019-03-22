@@ -180,6 +180,8 @@ class MySQLDataAccessor:
         cursor = self.database.cursor()
         cursor.execute("select e_word_id from e_text_search_word where e_word = '%s'" % word)
         word_id = cursor.fetchone()
+        if word_id is None:  # if this word is not in the database
+            return []  # return an empty list
         return self.get_all_relationship_tuples_from_word_id(word_id)
 
     def get_unique_relationships_from_pending(self):
