@@ -99,6 +99,9 @@ def get_all_documents():
 def get_all_occurrences():
     return get_all_resource('e_text_search_occur', occurrence_from_json)
 
+def get_all_relationships():
+    return get_all_resource('e_text_search_rel', relationship_from_json)
+
 class MySQLDataAccessor:
     def __init__(self):
         (username, password) = get_auth()
@@ -135,6 +138,14 @@ class MySQLDataAccessor:
             if eol == b'\x01':
                 is_eol = True
             result.append(Occurrence(w_id, d_id, seq, None, is_eol))
+        return result
+
+    def get_all_relationships(self):
+        cursor = self.database.cursor()
+        cursor.execute('select e_word_id, e_target_word_id, e_rel_relevance from e_text_search_rel')
+        result = []
+        for (w_id, t_w_id, rel) in cursor.fetchall():
+            result.append(Relationship(w_id, t_w_id, rel))
         return result
 
     def put_word(self, word, relevance):
@@ -197,7 +208,7 @@ class MySQLDataAccessor:
                "select w.e_word_id, tw.e_word_id, %s, now(), %s, now(), %s "
                "from (select e_word_id from e_text_search_word where e_word = %s) as w,"
                 " (select e_word_id from e_text_search_word where e_word = %s) as tw",
-            map(lambda t: (t[2], username, username, t[0], t[1]), self.pending_relationships))
+            map(lambda t: (t[2], username, username, t[0], t[1]), enumerate(self.pending_relationships)))
         self.database.commit()
         self.pending_relationships = []
 
