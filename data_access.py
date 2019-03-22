@@ -482,7 +482,7 @@ class RestApiDataAccessor:
                 logging.error(response.content)
 
     def add_occurrence(self, word_text, document_id, sequence, is_eol):
-         """
+        """
         Add an occurrence into the database. (Note: this adds the occurrence to pending_occurrences. You must call flush to actually add the occurrence.)
         :param word_text: text of the word
         :type word_text: str

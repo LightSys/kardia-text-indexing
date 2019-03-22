@@ -4,7 +4,6 @@ import textract
 from bs4 import UnicodeDammit
 import sys
 from wand.image import Image
-import img_importer
 import os
 
 def textBasedImport(file_path):
@@ -21,11 +20,11 @@ def imageBasedImport(file_path):
                 converted.save(filename=tmpdir+'/out.png')
 
         if page_num == 1:
-            contents = img_importer.importer(tmpdir+'/out.png', 'png')
+            contents = img_imp.importer(tmpdir+'/out.png', 'png')
         else:
             for x in range(page_num):
                 input = tmpdir+'/out-' + str(x) + '.png'
-                contents = contents + img_importer.importer(input, 'png')
+                contents = contents + img_imp.importer(input, 'png')
 
     return contents
 
